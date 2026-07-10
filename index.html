@@ -126,8 +126,7 @@
   .searchbar{display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
   .searchbar input{flex:1;min-width:180px;font-size:1rem;font-family:"Noto Sans TC";border:1.5px solid var(--line);border-radius:11px;padding:10px 14px;background:#fff}
   .searchbar input:focus{outline:none;border-color:var(--rose);box-shadow:0 0 0 4px var(--rose-soft)}
-  .stu{display:flex;align-items:center;gap:14px;padding:15px;border:1px solid var(--line);border-radius:15px;margin-bottom:10px;background:#fff;cursor:pointer;transition:.14s}
-  .stu:hover{border-color:var(--rose);box-shadow:var(--shadow);transform:translateY(-1px)}
+  .stu{display:flex;align-items:center;gap:14px;padding:15px;cursor:pointer}
   .stu .av{width:46px;height:46px;flex:none;border-radius:50%;background:var(--rose-soft);color:var(--rose);display:flex;align-items:center;justify-content:center;font-family:"Noto Serif TC",serif;font-weight:900;font-size:1.2rem}
   .stu .mid{flex:1;min-width:0}
   .stu .nm{font-family:"Noto Serif TC",serif;font-weight:700;font-size:1.05rem}
@@ -136,6 +135,30 @@
   .stu .chg .big{font-weight:900;font-size:1.25rem}
   .stu .chg .big.down{color:var(--sage)} .stu .chg .big.up{color:var(--warn)} .stu .chg .big.flat{color:var(--ink-soft)}
   .stu .chg small{display:block;font-family:"Noto Sans TC";font-size:.72rem;color:var(--ink-soft)}
+  /* card wrapper + status + actions */
+  .filterchips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  .chip{font-family:"Noto Sans TC";font-size:.84rem;font-weight:700;border:1.5px solid var(--line);background:#fff;color:var(--ink-soft);border-radius:999px;padding:7px 14px;cursor:pointer;transition:.14s}
+  .chip.on{background:var(--rose);color:#fff;border-color:var(--rose)}
+  .chip .n{opacity:.65;font-weight:500;margin-left:3px}
+  .stu-card{border:1px solid var(--line);border-radius:15px;margin-bottom:12px;background:#fff;overflow:hidden;transition:.14s}
+  .stu-card:hover{box-shadow:var(--shadow)}
+  .sbadge{display:inline-block;font-size:.68rem;font-weight:700;padding:2px 9px;border-radius:999px;margin-left:8px;vertical-align:middle}
+  .sbadge.active{background:var(--sage-soft);color:var(--sage)}
+  .sbadge.upcoming{background:#EEF2F7;color:#5f6d86}
+  .sbadge.done{background:#F0EAE7;color:var(--ink-soft)}
+  .stu-bar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:0 15px 14px}
+  .st-sel{font-family:"Noto Sans TC";font-size:.82rem;font-weight:700;border:1.5px solid var(--line);border-radius:9px;padding:6px 26px 6px 10px;background:var(--paper);color:var(--ink);cursor:pointer;-webkit-appearance:none;appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238A727C' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center}
+  .mini{font-family:"Noto Sans TC";font-size:.82rem;font-weight:700;border:1.5px solid var(--line);border-radius:9px;padding:6px 12px;background:#fff;color:var(--ink);cursor:pointer;transition:.14s}
+  .mini:hover{border-color:var(--rose);color:var(--rose)}
+  .mini.danger:hover{border-color:var(--warn);color:var(--warn)}
+  .stu-bar .mini.danger{margin-left:auto}
+  .sess-list{border-top:1px dashed var(--line);padding:8px 15px 12px;background:var(--paper)}
+  .sess{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:.86rem}
+  .sess:last-child{border-bottom:none}
+  .sess .sd{font-family:"Noto Serif TC",serif;color:var(--ink)}
+  .sess .so{display:flex;gap:6px;flex:none}
+  .sess .so .mini{padding:5px 10px;font-size:.78rem}
   .empty{text-align:center;color:var(--ink-soft);padding:40px 20px;font-size:.95rem;line-height:1.8}
   .backup{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
 
@@ -370,6 +393,7 @@
   <div class="view hidden" id="view-list">
     <section>
       <div class="sec-head"><span class="tag now">名單</span><h2>學員統計</h2><span class="hint" id="listCount"></span></div>
+      <div class="filterchips" id="filterChips"></div>
       <div class="searchbar"><input id="search" type="text" placeholder="搜尋姓名…"></div>
       <div id="stuList"></div>
     </section>
@@ -604,7 +628,7 @@
     if(!(f.weight>0&&f.height>0&&f.age>0)){toast('entryToast','err','請確認體重、身高、年齡都已填寫 🙏');return;}
     const db=loadDB();
     let st=db.students.find(s=>s.name===f.name);
-    if(!st){st={name:f.name,contact:f.contact,gender:f.gender,height:f.height,sessions:[]};db.students.push(st);}
+    if(!st){st={name:f.name,contact:f.contact,gender:f.gender,height:f.height,status:'active',sessions:[]};db.students.push(st);}
     else{st.contact=f.contact;st.gender=f.gender;st.height=f.height;}
     const sess=sessionFrom(f,c);
     const i=st.sessions.findIndex(x=>x.date===sess.date);
@@ -617,31 +641,64 @@
   }
 
   // ---------- list view ----------
+  const STATUS={upcoming:'即將啟動',active:'進行中',done:'已結案'};
+  const SORDER={active:0,upcoming:1,done:2};
+  let statusFilter='all';
+  const getStu=name=>loadDB().students.find(s=>s.name===name);
+
+  function renderChips(db){
+    const cnt={all:db.students.length,active:0,upcoming:0,done:0};
+    db.students.forEach(s=>cnt[s.status||'active']++);
+    const chips=[['all','全部'],['active','進行中'],['upcoming','即將啟動'],['done','已結案']];
+    $('filterChips').innerHTML=chips.map(([k,l])=>'<button class="chip'+(statusFilter===k?' on':'')+'" data-f="'+k+'">'+l+' <span class="n">'+cnt[k]+'</span></button>').join('');
+  }
+  function cardHTML(s){
+    const enc=encodeURIComponent(s.name), ss=s.sessions, first=ss[0], last=ss[ss.length-1];
+    const dw=last&&first?last.weight-first.weight:0;
+    const cls=dw<-0.05?'down':(dw>0.05?'up':'flat'), arrow=dw<-0.05?'▼':(dw>0.05?'▲':'—');
+    const st=s.status||'active';
+    const opts=[['upcoming','即將啟動'],['active','進行中'],['done','已結案']].map(([k,l])=>'<option value="'+k+'"'+(k===st?' selected':'')+'>'+l+'</option>').join('');
+    const sess=ss.slice().reverse().map(x=>'<div class="sess"><span class="sd">'+x.date+' · '+x.weight+'kg · 體脂'+x.bodyFat+'%</span><span class="so"><button class="mini" data-act="editd" data-date="'+x.date+'">編輯</button><button class="mini danger" data-act="deld" data-date="'+x.date+'">刪除</button></span></div>').join('');
+    return '<div class="stu-card" data-name="'+enc+'">'
+      +'<div class="stu" data-open="1"><div class="av">'+(s.name[0]||'?')+'</div>'
+      +'<div class="mid"><div class="nm">'+s.name+' <span class="sbadge '+st+'">'+STATUS[st]+'</span></div>'
+      +'<div class="meta">'+ss.length+' 次紀錄 · 最新 '+(last?last.date:'—')+' · 目前 '+(last?last.weight+'kg':'—')+'</div></div>'
+      +'<div class="chg"><div class="big '+cls+'">'+arrow+' '+fmt(Math.abs(dw),1)+'</div><small>kg（首次至今）</small></div></div>'
+      +'<div class="stu-bar"><select class="st-sel" data-act="status" title="狀態">'+opts+'</select>'
+      +'<button class="mini" data-act="edit">✎ 編輯最新</button>'
+      +(ss.length>1?'<button class="mini" data-act="expand">紀錄 '+ss.length+' ▾</button>':'')
+      +'<button class="mini danger" data-act="delstu">🗑 刪除學員</button></div>'
+      +'<div class="sess-list hidden" data-sess>'+sess+'</div></div>';
+  }
   function renderList(filter){
     const db=loadDB();
+    renderChips(db);
     const kw=(filter||'').trim();
     let arr=db.students.slice();
-    if(kw)arr=arr.filter(s=>s.name.indexOf(kw)>=0||(s.contact||'').indexOf(kw)>=0);
     arr.forEach(s=>s._last=s.sessions.length?s.sessions[s.sessions.length-1].date:'');
-    arr.sort((a,b)=>b._last.localeCompare(a._last));
+    if(kw)arr=arr.filter(s=>s.name.indexOf(kw)>=0||(s.contact||'').indexOf(kw)>=0);
+    if(statusFilter!=='all')arr=arr.filter(s=>(s.status||'active')===statusFilter);
+    arr.sort((a,b)=>{const oa=SORDER[a.status||'active'],ob=SORDER[b.status||'active'];return oa!==ob?oa-ob:(b._last||'').localeCompare(a._last||'');});
     $('listCount').textContent='共 '+db.students.length+' 位學員';
     const box=$('stuList');
-    if(!arr.length){box.innerHTML='<div class="empty">'+(db.students.length?'找不到符合的學員':'還沒有學員紀錄。到「新增／編輯」頁填完資料，按「儲存到後台」就會出現在這裡。')+'</div>';return;}
-    box.innerHTML=arr.map(s=>{
-      const ss=s.sessions, first=ss[0], last=ss[ss.length-1];
-      const dw=last&&first?last.weight-first.weight:0;
-      const cls=dw<-0.05?'down':(dw>0.05?'up':'flat');
-      const arrow=dw<-0.05?'▼':(dw>0.05?'▲':'—');
-      return '<div class="stu" data-name="'+encodeURIComponent(s.name)+'">'
-        +'<div class="av">'+(s.name[0]||'?')+'</div>'
-        +'<div class="mid"><div class="nm">'+s.name+'</div>'
-        +'<div class="meta">'+ss.length+' 次紀錄 · 最新 '+(last?last.date:'—')+' · 目前 '+(last?last.weight+'kg':'—')+'</div></div>'
-        +'<div class="chg"><div class="big '+cls+'">'+arrow+' '+fmt(Math.abs(dw),1)+'</div><small>kg（首次至今）</small></div></div>';
-    }).join('');
-    box.querySelectorAll('.stu').forEach(el=>el.addEventListener('click',()=>{
-      const nm=decodeURIComponent(el.dataset.name); switchView('analysis'); $('anaPick').value=nm; renderAnalysis(nm);
-    }));
+    if(!arr.length){box.innerHTML='<div class="empty">'+(db.students.length?'這個狀態下沒有學員':'還沒有學員紀錄。到「新增／編輯」頁填完資料，按「儲存到後台」就會出現在這裡。')+'</div>';return;}
+    box.innerHTML=arr.map(cardHTML).join('');
   }
+  function setStatus(name,status){const db=loadDB();const st=db.students.find(s=>s.name===name);if(!st)return;st.status=status;saveDB(db);renderList($('search').value);}
+  function deleteStudent(name){
+    if(!confirm('確定刪除「'+name+'」整位學員及其所有紀錄嗎？此動作無法復原。'))return;
+    const db=loadDB();db.students=db.students.filter(s=>s.name!==name);saveDB(db);
+    renderList($('search').value);refreshAnaPicker();toast('listToast','ok','已刪除學員：'+name);
+  }
+  function deleteSession(name,date){
+    if(!confirm('確定刪除「'+name+'」在 '+date+' 的這筆紀錄嗎？'))return;
+    const db=loadDB();const st=db.students.find(s=>s.name===name);if(!st)return;
+    st.sessions=st.sessions.filter(x=>x.date!==date);
+    let msg='已刪除紀錄：'+name+' · '+date;
+    if(!st.sessions.length){db.students=db.students.filter(s=>s.name!==name);msg='該學員已無紀錄，已一併移除：'+name;}
+    saveDB(db);renderList($('search').value);refreshAnaPicker();toast('listToast','ok',msg);
+  }
+  function editLatest(name){const st=getStu(name);if(st&&st.sessions.length)loadIntoForm(name,st.sessions[st.sessions.length-1].date);}
 
   // ---------- analysis view ----------
   function refreshAnaPicker(){
@@ -846,6 +903,23 @@
   $('clearBtn').addEventListener('click',()=>{['cname','ccontact','notes'].forEach(id=>$(id).value='');CIRC.forEach(([k])=>$('c_'+k).value='');$('cdate').value=todayISO();editKey=null;$('entryMode').textContent='新增紀錄';renderSummary();toast('entryToast','ok','已清空，可輸入新學員');});
   $('tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b)switchView(b.dataset.v);});
   $('search').addEventListener('input',e=>renderList(e.target.value));
+  $('filterChips').addEventListener('click',e=>{const b=e.target.closest('.chip');if(!b)return;statusFilter=b.dataset.f;renderList($('search').value);});
+  $('stuList').addEventListener('click',e=>{
+    const card=e.target.closest('.stu-card');if(!card)return;
+    const name=decodeURIComponent(card.dataset.name);
+    const actEl=e.target.closest('[data-act]');
+    const act=actEl?actEl.dataset.act:(e.target.closest('[data-open]')?'open':null);
+    if(act==='open'){switchView('analysis');$('anaPick').value=name;renderAnalysis(name);}
+    else if(act==='edit')editLatest(name);
+    else if(act==='editd')loadIntoForm(name,actEl.dataset.date);
+    else if(act==='deld')deleteSession(name,actEl.dataset.date);
+    else if(act==='delstu')deleteStudent(name);
+    else if(act==='expand')card.querySelector('[data-sess]').classList.toggle('hidden');
+  });
+  $('stuList').addEventListener('change',e=>{
+    const sel=e.target.closest('select[data-act="status"]');if(!sel)return;
+    const card=e.target.closest('.stu-card');setStatus(decodeURIComponent(card.dataset.name),sel.value);
+  });
   $('anaPick').addEventListener('change',e=>renderAnalysis(e.target.value));
   $('anaPdfBtn').addEventListener('click',makeAnalysisPDF);
   async function makeInfoPDF(){
