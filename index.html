@@ -80,6 +80,35 @@
   .badge.in{background:var(--sage-soft);color:var(--sage)}
   .badge.slow{background:#EAEEF4;color:#5f6d86}
   .badge.fast{background:#FCEEE4;color:var(--warn)}
+
+  /* collapsible calc info */
+  .calc-info{border:1px solid var(--line);border-radius:14px;background:var(--paper);overflow:hidden}
+  .calc-info summary{cursor:pointer;list-style:none;padding:15px 18px;font-family:"Noto Serif TC",serif;font-weight:700;font-size:1rem;color:var(--ink);display:flex;align-items:center;gap:10px}
+  .calc-info summary::-webkit-details-marker{display:none}
+  .calc-info summary::after{content:"▾";margin-left:auto;color:var(--ink-soft);transition:.2s}
+  .calc-info[open] summary::after{transform:rotate(180deg)}
+  .calc-info summary .tag{margin:0}
+  .calc-body{padding:0 18px 18px;font-size:.9rem;line-height:1.85;color:#5f4750}
+  .calc-body h5{font-family:"Noto Serif TC",serif;font-size:.98rem;color:var(--ink);margin:14px 0 6px;padding-top:12px;border-top:1px dashed var(--line)}
+  .calc-body h5:first-child{border-top:none;padding-top:2px}
+  .calc-body b{color:var(--ink)}
+  .calc-body .chain{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:.86rem;line-height:1.95}
+  .calc-body table.kt{width:100%;border-collapse:collapse;margin:6px 0}
+  .calc-body table.kt td{border:1px solid var(--line);padding:6px 10px;font-size:.86rem;background:#fff}
+  .calc-body table.kt td:first-child{font-weight:700;white-space:nowrap;width:34%;color:var(--ink)}
+  .calc-body ul{margin:4px 0 4px 18px} .calc-body li{margin:3px 0}
+  .calc-body .warn{color:var(--warn)}
+
+  #reportInfo .ci{font-size:12.5px;color:#5f4750;line-height:1.95;margin-top:16px}
+  #reportInfo .ci h5{font-family:"Noto Serif TC",serif;font-size:14px;color:var(--ink);margin:15px 0 6px;padding-top:12px;border-top:1px solid var(--line)}
+  #reportInfo .ci h5:first-child{border-top:none;padding-top:0}
+  #reportInfo .ci b{color:var(--ink)}
+  #reportInfo .ci .chain{background:#FCF3F0;border:1px solid #F0D8D0;border-radius:10px;padding:12px 15px;font-size:12px;line-height:2.05}
+  #reportInfo .ci table{width:100%;border-collapse:collapse;margin:6px 0}
+  #reportInfo .ci table td{border:1px solid #E3D3CB;padding:6px 10px;font-size:12px}
+  #reportInfo .ci table td:first-child{background:#FAF5F1;font-weight:700;width:34%;white-space:nowrap;color:var(--ink)}
+  #reportInfo .ci ul{margin:4px 0 4px 18px} #reportInfo .ci li{margin:3px 0}
+  #reportInfo .ci .warn{color:#8C4A22}
   .alert{border-radius:12px;padding:12px 14px;font-size:.86rem;line-height:1.6;margin-top:12px;display:none}
   .alert.show{display:block}
   .alert.warn{background:#FCEEE4;border:1px solid #F0C9AC;color:#8C4A22}
@@ -293,6 +322,39 @@
     </section>
 
     <section>
+      <details class="calc-info" id="calcInfo">
+        <summary><span class="tag food">ⓘ</span> 份量與熱量 · 計算說明（點開可對學員解釋）</summary>
+        <div class="calc-body">
+          <h5>① 整體計算流程</h5>
+          <div class="chain">基礎代謝 BMR　×　活動係數　＝　<b>TDEE（維持熱量）</b><br>TDEE　×（1＋減脂強度）　＝　<b>每日主食目標熱量</b>（可微調）<br>主食熱量　按比例拆三大營養素　÷　每份大卡　＝　<b>份數</b><br>主食　＋　蔬果熱量　＝　<b>每日實際攝取</b><br>TDEE　－　每日實際攝取　＝　<b>每日熱量差</b>　→　達標時間</div>
+          <h5>② 每份熱量基準（1 份 ＝ 1 個拳頭）</h5>
+          <table class="kt">
+            <tr><td>碳水化合物</td><td>1 份 ＝ 240 大卡（約 60g，1 拳頭飯／澱粉）</td></tr>
+            <tr><td>蛋白質</td><td>1 份 ＝ 60 大卡（約 15g）</td></tr>
+            <tr><td>油脂</td><td>1 份 ＝ 120 大卡（1 湯匙橄欖油 15ml／5 顆腰果）</td></tr>
+            <tr><td>蔬菜</td><td>1 份 ＝ 25 大卡（煮熟後 1 拳頭體積）</td></tr>
+            <tr><td>低糖水果</td><td>1 份 ＝ 60 大卡（1 拳頭）</td></tr>
+          </table>
+          <h5>③ 三大營養素比例</h5>
+          均衡飲食：碳水 50%、蛋白質 25%、油脂 25%<br>低醣飲食：碳水 20%、蛋白質 30%、油脂 50%<br>
+          <span style="color:var(--ink-soft);font-size:.84rem">例：主食 1,373 大卡 × 低醣 → 碳水 1,373×20%÷240 ≈ 1.1 份；蛋白 ×30%÷60 ≈ 6.9 份；油脂 ×50%÷120 ≈ 5.7 份。</span>
+          <h5>④ 蔬果規則（熱量已計入）</h5>
+          <ul>
+            <li>蔬菜：每天 <b>3–5 份</b>（基本 3 份），葉菜以<b>煮熟後的拳頭體積</b>計。</li>
+            <li>低糖水果：每天 <b>最多 1 份</b>（莓果、芭樂、小番茄等）。</li>
+            <li>計算採每日 <b>蔬菜 4 份＋水果 1 份 ≈ 160 大卡</b>，已加進「每日實際攝取」，所以達標時間是<b>含蔬果</b>後的實際估計。</li>
+            <li class="warn">⚠️ 玉米、地瓜、南瓜、馬鈴薯、芋頭、紅蘿蔔、豆類屬「碳水」不算蔬菜；炒菜的油要算進油脂份。</li>
+          </ul>
+          <h5>⑤ 達標時間</h5>
+          1 公斤體脂 ≈ <b>7,700 大卡</b>。減 1kg 天數 ＝ 7,700 ÷ 每日熱量差；每月約減 ＝ 每日熱量差 ×30 ÷ 7,700。
+          <h5>⑥ 健康速度（安全檢核）</h5>
+          每月建議落在 <b>體重的 3–5%</b>。低於下限＝溫和安全（較慢）；高於上限＝偏快，別讓每日攝取低於基礎代謝。
+        </div>
+      </details>
+      <div style="margin-top:12px"><button class="btn ghost" id="infoPdfBtn">⬇ 下載「計算說明」PDF</button></div>
+    </section>
+
+    <section>
       <div class="actions">
         <button class="btn save" id="saveBtn">＋ 儲存到後台</button>
         <button class="btn primary" id="pdfBtn">產生學員 PDF（3 頁）</button>
@@ -358,12 +420,12 @@
           <span class="li" style="grid-column:1/-1">預估達標時間<b id="r_months">—</b></span></div></div>
       <div class="r-panel food"><div class="r-h"><span class="pip" style="background:var(--sage)"></span>每日飲食建議（<span id="r_dietname">—</span>）</div>
         <div class="r-list" style="grid-template-columns:1fr 1fr 1fr">
-          <span class="li">維持熱量 TDEE<b id="r_tdee">—</b></span><span class="li">每日建議攝取<b id="r_target">—</b></span><span class="li">每日熱量差<b id="r_def">—</b></span></div>
+          <span class="li">維持熱量 TDEE<b id="r_tdee">—</b></span><span class="li">主食建議<b id="r_target">—</b></span><span class="li">＋蔬果(3–5份)<b id="r_produce">—</b></span><span class="li">每日實際攝取<b id="r_actual">—</b></span><span class="li">每日熱量差<b id="r_def">—</b></span></div>
         <div class="r-macro">
           <div class="r-mac"><div class="t">碳水化合物 <span id="r_pC">—</span></div><div class="n"><span id="r_ptC">—</span><small> 份</small></div><div class="kc"><span id="r_kcC">—</span> 大卡</div></div>
           <div class="r-mac"><div class="t">蛋白質 <span id="r_pP">—</span></div><div class="n"><span id="r_ptP">—</span><small> 份</small></div><div class="kc"><span id="r_kcP">—</span> 大卡</div></div>
           <div class="r-mac"><div class="t">油脂 <span id="r_pF">—</span></div><div class="n"><span id="r_ptF">—</span><small> 份</small></div><div class="kc"><span id="r_kcF">—</span> 大卡</div></div></div>
-        <div class="r-veg">🥬 <b>蔬菜每天至少 5 份</b>（可更多）、<b>水果每天最多 1 份</b>。碳水與蛋白質 1 份＝1 個拳頭；油脂 1 份＝1 湯匙橄欖油（15ml）或 5 顆腰果。依此節奏，<b>減 1kg 約需 <span id="r_days">—</span> 天</b>。</div></div>
+        <div class="r-veg">🥬 <b>蔬菜每天 3–5 份</b>（基本 3 份，以煮熟後的拳頭體積計）、<b>低糖水果每天最多 1 份</b>。蔬菜 1 份約 25 大卡、水果 1 份約 60 大卡，<b>已計入每日熱量</b>。碳水與蛋白質 1 份＝1 個拳頭；油脂 1 份＝1 湯匙橄欖油（15ml）或 5 顆腰果。依此計畫，<b>減 1kg 約需 <span id="r_days">—</span> 天</b>。</div></div>
     </div>
     <div class="r-note">💗 提醒：每月瘦身速度與熱量換算皆為平均值參考，實際會因體質、飲食品質與生活習慣而異；基礎代謝量測可能有 10–15% 誤差。健康不是越少吃越好，長期低於基礎代謝並不理想。慢慢來，一樣會抵達。</div>
     <div class="r-foot"><span class="bd">TATA FLOW</span><span id="r_foot_date">—</span></div>
@@ -385,7 +447,7 @@
   <!-- page3 -->
   <div id="report3" class="report">
     <div class="r-top"><div class="r-brand">TATA FLOW<span>循環 · 塑形 · 健康瘦身</span></div><div class="r-title">飲食記錄表<small>對照每日目標份量．誠實紀錄</small></div></div>
-    <div class="target-banner">🎯 <b>每日目標</b>　<span class="cal"><span id="b_cal">—</span> 大卡</span>　｜　碳水 <b><span id="b_c">—</span></b> 份　蛋白質 <b><span id="b_p">—</span></b> 份　油脂 <b><span id="b_f">—</span></b> 份　蔬菜 <b>5+</b> 份　水果 <b>≤1</b> 份<br><span style="font-size:11px;color:#6a7357">份量抓法：碳水 / 蛋白質 1 份＝1 個拳頭；油脂 1 份＝1 湯匙橄欖油（15ml）或 5 顆腰果</span></div>
+    <div class="target-banner">🎯 <b>每日目標</b>　<span class="cal"><span id="b_cal">—</span> 大卡</span>（主食）　｜　碳水 <b><span id="b_c">—</span></b> 份　蛋白質 <b><span id="b_p">—</span></b> 份　油脂 <b><span id="b_f">—</span></b> 份　蔬菜 <b>3–5</b> 份　低糖水果 <b>≤1</b> 份<br><span style="font-size:11px;color:#6a7357">份量抓法：碳水 / 蛋白質 1 份＝1 個拳頭；蔬菜 1 份＝1 個拳頭（煮熟）；油脂 1 份＝1 湯匙橄欖油（15ml）或 5 顆腰果</span></div>
     <table class="dtbl" id="dtbl"></table>
     <div class="tip" style="margin-top:12px"><b style="color:var(--sage)">✍️ 使用方式</b>每天記下實際吃的內容，對照上方目標份量檢視。三餐＋點心都寫，順手記錄飲水與運動。紀錄是為了看見自己的進步，不是為了苛責自己——誠實就是最好的開始。</div>
     <div class="r-foot"><span class="bd">TATA FLOW</span><span>飲食記錄表</span></div>
@@ -399,6 +461,38 @@
     <div class="r-note">💗 數據為每次測量的參考值，含正常波動（含水量、量測誤差 10–15%）。真正的成果請搭配體態照一起比對。持續、穩定，比一時的數字更重要。</div>
     <div class="r-foot"><span class="bd">TATA FLOW</span><span id="ra_foot">—</span></div>
   </div>
+
+  <!-- 計算說明 -->
+  <div id="reportInfo" class="report">
+    <div class="r-top"><div class="r-brand">TATA FLOW<span>循環 · 塑形 · 健康瘦身</span></div><div class="r-title">份量與熱量 · 計算說明<small>飲食計畫的計算依據</small></div></div>
+    <div class="ci">
+      <h5>① 整體計算流程</h5>
+      <div class="chain">基礎代謝 BMR　×　活動係數　＝　<b>TDEE（維持熱量）</b><br>TDEE　×（1＋減脂強度）　＝　<b>每日主食目標熱量</b>（可微調）<br>主食熱量　按比例拆三大營養素　÷　每份大卡　＝　<b>份數</b><br>主食　＋　蔬果熱量　＝　<b>每日實際攝取</b><br>TDEE　－　每日實際攝取　＝　<b>每日熱量差</b>　→　達標時間</div>
+      <h5>② 每份熱量基準（1 份 ＝ 1 個拳頭）</h5>
+      <table>
+        <tr><td>碳水化合物</td><td>1 份 ＝ 240 大卡（約 60g，1 拳頭飯／澱粉）</td></tr>
+        <tr><td>蛋白質</td><td>1 份 ＝ 60 大卡（約 15g）</td></tr>
+        <tr><td>油脂</td><td>1 份 ＝ 120 大卡（1 湯匙橄欖油 15ml／5 顆腰果）</td></tr>
+        <tr><td>蔬菜</td><td>1 份 ＝ 25 大卡（煮熟後 1 拳頭體積）</td></tr>
+        <tr><td>低糖水果</td><td>1 份 ＝ 60 大卡（1 拳頭）</td></tr>
+      </table>
+      <h5>③ 三大營養素比例</h5>
+      均衡飲食：碳水 50%、蛋白質 25%、油脂 25%　｜　低醣飲食：碳水 20%、蛋白質 30%、油脂 50%<br>
+      <span style="color:#8A727C">例：主食 1,373 大卡 × 低醣 → 碳水 1,373×20%÷240 ≈ 1.1 份；蛋白 ×30%÷60 ≈ 6.9 份；油脂 ×50%÷120 ≈ 5.7 份。</span>
+      <h5>④ 蔬果規則（熱量已計入每日攝取）</h5>
+      <ul>
+        <li>蔬菜：每天 <b>3–5 份</b>（基本 3 份），葉菜以<b>煮熟後的拳頭體積</b>計。</li>
+        <li>低糖水果：每天 <b>最多 1 份</b>（莓果、芭樂、小番茄等）。</li>
+        <li>計算採每日 <b>蔬菜 4 份 ＋ 水果 1 份 ≈ 160 大卡</b>，已加進「每日實際攝取」，因此達標時間是<b>含蔬果</b>的實際估計。</li>
+        <li class="warn">⚠️ 玉米、地瓜、南瓜、馬鈴薯、芋頭、紅蘿蔔、豆類屬「碳水」不算蔬菜；炒菜的油要算進油脂份。</li>
+      </ul>
+      <h5>⑤ 達標時間</h5>
+      1 公斤體脂 ≈ <b>7,700 大卡</b>。減 1kg 天數 ＝ 7,700 ÷ 每日熱量差；每月約減 kg ＝ 每日熱量差 × 30 ÷ 7,700。
+      <h5>⑥ 健康速度（安全檢核）</h5>
+      每月建議落在 <b>體重的 3–5%</b> 之間。低於下限＝溫和安全（速度較慢）；高於上限＝偏快，建議放緩，別讓每日攝取低於基礎代謝。
+    </div>
+    <div class="r-foot"><span class="bd">TATA FLOW</span><span>份量與熱量計算說明</span></div>
+  </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -409,6 +503,9 @@
   const LS='tataflow_students_v1';
   const DIETS={balance:{c:.5,p:.25,f:.25,label:'均衡飲食'},lowcarb:{c:.2,p:.3,f:.5,label:'低醣飲食'}};
   const DIV={c:240,p:60,f:120};
+  const KCAL_VEG=25, KCAL_FRUIT=60;              // 每份(拳頭)大卡：蔬菜25、低糖水果60
+  const STD_VEG=4, STD_FRUIT=1;                  // 每日標準蔬果：蔬菜4份 + 水果1份 = 5份
+  const PRODUCE_KCAL=STD_VEG*KCAL_VEG+STD_FRUIT*KCAL_FRUIT;   // = 160 大卡（已計入每日攝取）
   const ACT={'1.2':'完全沒有運動','1.375':'每週三次內','1.42':'每週運動四次','1.46':'每週運動五次','1.63':'每週運動六次','1.72':'每週運動七次','1.9':'超激烈'};
   const STR={'0':'維持','-0.10':'最少 −10%','-0.15':'正常 −15%','-0.25':'積極 −25%'};
   const CIRC=[['arm','右上臂圍'],['waist','腰圍'],['belly','腹圍'],['hip','臀圍'],['thigh','右大腿圍'],['calf','右小腿圍']];
@@ -442,7 +539,9 @@
     const targetCal=num($('target'))||Math.round(target);
     const r=DIETS[f.diet];
     const kcC=targetCal*r.c,kcP=targetCal*r.p,kcF=targetCal*r.f;
-    const deficit=f.tdee-targetCal;
+    const produceKcal=PRODUCE_KCAL;                 // 蔬果固定計入
+    const actualIntake=targetCal+produceKcal;        // 每日實際總攝取 = 主食 + 蔬果
+    const deficit=f.tdee-actualIntake;               // 熱量差改用「實際總攝取」
     // 健康速度 = 每月體重 3–5%（安全參考）；實際達標時間 = 依熱量差計算（1kg 脂肪 ≈ 7700 大卡）
     const healthyMin=f.weight*0.03, healthyMax=f.weight*0.05;
     const planMonthlyLoss=deficit>0?deficit*30/7700:0;                    // 每月實際約減 kg
@@ -454,6 +553,7 @@
       fatMass,totalLoss,fatToLose,
       healthyMin,healthyMax,planMonthlyLoss,planMonths,pacePct,band,
       targetCal,dietKey:f.diet,dietLabel:r.label,ratio:r,
+      produceKcal,actualIntake,
       kcC,kcP,kcF,ptC:kcC/DIV.c,ptP:kcP/DIV.p,ptF:kcF/DIV.f,pC:r.c*100,pP:r.p*100,pF:r.f*100,
       deficit,days1kg:deficit>0?7700/deficit:0};
   }
@@ -468,7 +568,8 @@
     $('s_fat').textContent=fmt(c.fatMass,1); $('s_rate').textContent=fmt(c.bmrRate,1);
     $('s_total').textContent=fmt(c.totalLoss,1); $('s_fatloss').textContent=fmt(c.fatToLose,1);
     $('s_band').innerHTML=fmt(c.healthyMin,1)+'–'+fmt(c.healthyMax,1)+' <small style="font-size:.62em;color:#8A727C">kg</small>';
-    $('macroLine').innerHTML='每日建議 <b>'+fmt(c.targetCal,0)+' 大卡</b>（'+c.dietLabel+'）｜碳水 <b>'+fmt(c.ptC,1)+'</b> 份　蛋白質 <b>'+fmt(c.ptP,1)+'</b> 份　油脂 <b>'+fmt(c.ptF,1)+'</b> 份　蔬菜 5+ 份　水果 ≤1 份';
+    $('macroLine').innerHTML='<b>主食</b> 每日 '+fmt(c.targetCal,0)+' 大卡（'+c.dietLabel+'）｜碳水 <b>'+fmt(c.ptC,1)+'</b> 份　蛋白質 <b>'+fmt(c.ptP,1)+'</b> 份　油脂 <b>'+fmt(c.ptF,1)+'</b> 份'
+      +'<br><span style="color:#6a7357">＋ 蔬菜 3–5 份（基本 3 份·煮熟拳頭）＋ 低糖水果 ≤1 份　≈ '+fmt(c.produceKcal,0)+' 大卡　→　<b style="color:#3e4a30">每日實際約 '+fmt(c.actualIntake,0)+' 大卡</b></span>';
     renderPlanTime(c);
     const al=$('a_bmi');al.classList.remove('show');
     if(c.bmiGoal>0&&c.bmiGoal<18.5){al.classList.add('show');al.innerHTML='⚠️ 目標 BMI '+fmt(c.bmiGoal,1)+' 低於健康下限（18.5）。建議目標體重不低於 '+fmt(18.5*(f.height/100)**2,1)+' kg，更長久也更好維持。';}
@@ -479,7 +580,7 @@
     if(c.totalLoss<=0){el.innerHTML='<span class="big">已達標 🎉</span>　目前體重已達到或低於目標。';return;}
     if(c.deficit<=0){el.innerHTML='目前<b>每日熱量差 '+fmt(c.deficit,0)+' 大卡（≤ 0）</b>，這份飲食不會造成減重。若要減重，請調低「每日目標熱量」或提高活動量。';return;}
     const badge=c.band==='in'?'<span class="badge in">✓ 在健康區間內</span>':(c.band==='slow'?'<span class="badge slow">溫和 · 低於下限</span>':'<span class="badge fast">⚠️ 偏快</span>');
-    let h='依這份<b>飲食＋運動</b>計畫：每日熱量差 <b>'+fmt(c.deficit,0)+'</b> 大卡，每月約減 <b>'+fmt(c.planMonthlyLoss,1)+'</b> kg（體重的 '+fmt(c.pacePct,1)+'%）'+badge
+    let h='依這份<b>飲食＋運動</b>計畫：每日熱量差 <b>'+fmt(c.deficit,0)+'</b> 大卡（已含蔬果），每月約減 <b>'+fmt(c.planMonthlyLoss,1)+'</b> kg（體重的 '+fmt(c.pacePct,1)+'%）'+badge
       +'<br>減 1kg 約 '+fmt(c.days1kg,1)+' 天　→　要減 '+fmt(c.totalLoss,1)+'kg　<span class="big">預估 '+fmt(c.planMonths,1)+' 個月</span> 達標';
     if(c.band==='slow')h+='<br><span style="font-size:.82rem;color:var(--ink-soft)">此速度低於健康區間下限（'+fmt(c.healthyMin,1)+' kg/月），很溫和、很安全；想加快可增加活動量，或在「不低於基礎代謝」的前提下再降一點每日熱量。</span>';
     if(c.band==='fast')h+='<br><span style="font-size:.82rem;color:var(--warn)">此速度超過健康區間上限（'+fmt(c.healthyMax,1)+' kg/月），建議放緩，別讓每日攝取低於基礎代謝。</span>';
@@ -637,7 +738,7 @@
     setR('r_total',fmt(c.totalLoss,1)+' kg');setR('r_fat',fmt(c.fatToLose,2)+' kg');
     setR('r_pace',fmt(c.planMonthlyLoss,1)+' kg（健康 '+fmt(c.healthyMin,1)+'–'+fmt(c.healthyMax,1)+'）');
     setR('r_months',c.totalLoss<=0?'已達標':(c.deficit<=0?'—（熱量差≤0）':fmt(c.planMonths,1)+' 個月'));
-    setR('r_dietname',c.dietLabel);setR('r_tdee',fmt(f.tdee,0)+' 大卡');setR('r_target',fmt(c.targetCal,0)+' 大卡');setR('r_def',fmt(c.deficit,0)+' 大卡');
+    setR('r_dietname',c.dietLabel);setR('r_tdee',fmt(f.tdee,0)+' 大卡');setR('r_target',fmt(c.targetCal,0)+' 大卡');setR('r_produce','約 '+fmt(c.produceKcal,0)+' 大卡');setR('r_actual',fmt(c.actualIntake,0)+' 大卡');setR('r_def',fmt(c.deficit,0)+' 大卡');
     setR('r_pC',fmt(c.pC,0)+'%');setR('r_pP',fmt(c.pP,0)+'%');setR('r_pF',fmt(c.pF,0)+'%');
     setR('r_ptC',fmt(c.ptC,1));setR('r_kcC',fmt(c.kcC,0));setR('r_ptP',fmt(c.ptP,1));setR('r_kcP',fmt(c.kcP,0));setR('r_ptF',fmt(c.ptF,1));setR('r_kcF',fmt(c.kcF,0));
     setR('r_days',fmt(c.days1kg,1));
@@ -747,6 +848,13 @@
   $('search').addEventListener('input',e=>renderList(e.target.value));
   $('anaPick').addEventListener('change',e=>renderAnalysis(e.target.value));
   $('anaPdfBtn').addEventListener('click',makeAnalysisPDF);
+  async function makeInfoPDF(){
+    const btn=$('infoPdfBtn');btn.disabled=true;btn.textContent='產生中…';
+    try{await document.fonts.ready;const {jsPDF}=window.jspdf;const pdf=new jsPDF('p','mm','a4');await capturePage('reportInfo',pdf,true);pdf.save('TATA_FLOW_計算說明.pdf');}
+    catch(e){console.error(e);alert('PDF 產生失敗，請重新整理再試');}
+    btn.disabled=false;btn.textContent='⬇ 下載「計算說明」PDF';
+  }
+  $('infoPdfBtn').addEventListener('click',makeInfoPDF);
   $('expJson').addEventListener('click',exportJson);
   $('expCsv').addEventListener('click',exportCsv);
   $('impJson').addEventListener('click',()=>$('impFile').click());
