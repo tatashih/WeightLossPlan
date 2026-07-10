@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TATA FLOW · 學員管理後台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700;900&family=Noto+Sans+TC:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#FAF3EE; --paper-2:#F4E9E1; --card:#FFFFFF;
+    --ink:#3B2831; --ink-soft:#8A727C; --line:#EADCD3;
+    --rose:#B85C4D; --rose-soft:#F6E5E0;
+    --plum:#6F4C6E; --plum-soft:#EDE3EC;
+    --gold:#B98A34; --sage:#7E8C6A; --sage-soft:#E9EDE2; --warn:#C0642F;
+    --shadow:0 18px 50px -28px rgba(59,40,49,.45);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:"Noto Sans TC",sans-serif;background:
+      radial-gradient(120% 80% at 10% -10%,#FBEDE5 0%,transparent 55%),
+      radial-gradient(110% 90% at 100% 0%,#F1E6EE 0%,transparent 50%),var(--paper);
+    color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;padding:clamp(14px,3vw,34px)}
+  .app{max-width:900px;margin:0 auto}
+  .hidden{display:none!important}
+
+  /* nav */
+  .topnav{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+  .brand{font-family:"Noto Serif TC",serif;font-weight:900;font-size:1.4rem;letter-spacing:.1em;color:var(--rose)}
+  .brand span{display:block;font-family:"Noto Sans TC";font-weight:500;font-size:.72rem;letter-spacing:.2em;color:var(--ink-soft);margin-top:2px}
+  .tabs{display:flex;gap:6px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:5px;margin-left:auto;box-shadow:var(--shadow)}
+  .tabs button{font-family:"Noto Sans TC";font-weight:700;font-size:.9rem;border:none;cursor:pointer;padding:9px 16px;border-radius:10px;background:transparent;color:var(--ink-soft);transition:.16s}
+  .tabs button.on{background:var(--rose);color:#fff;box-shadow:0 8px 16px -8px var(--rose)}
+  @media(max-width:560px){.tabs{margin-left:0;width:100%}.tabs button{flex:1;padding:9px 6px}}
+
+  section{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:clamp(18px,3.5vw,26px);margin-bottom:18px;box-shadow:var(--shadow)}
+  .sec-head{display:flex;align-items:baseline;gap:12px;margin-bottom:18px;flex-wrap:wrap}
+  .tag{font-family:"Noto Serif TC",serif;font-weight:700;font-size:.76rem;padding:5px 12px;border-radius:999px;white-space:nowrap;letter-spacing:.08em}
+  .tag.now{background:var(--rose-soft);color:var(--rose)} .tag.goal{background:var(--plum-soft);color:var(--plum)}
+  .tag.food{background:var(--sage-soft);color:var(--sage)} .tag.meas{background:#EFE7DA;color:var(--gold)}
+  .sec-head h2{font-family:"Noto Serif TC",serif;font-weight:700;font-size:1.18rem}
+  .sec-head .hint{margin-left:auto;color:var(--ink-soft);font-size:.78rem}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px 14px}
+  .grid.g3{grid-template-columns:1fr 1fr 1fr}
+  @media(max-width:560px){.grid,.grid.g3{grid-template-columns:1fr 1fr}}
+  .field label{display:block;font-size:.8rem;color:var(--ink-soft);margin-bottom:5px;font-weight:500}
+  .field .ipt{position:relative;display:flex;align-items:center}
+  .field input,.field select{width:100%;font-family:"Noto Serif TC",serif;font-size:1.15rem;font-weight:600;color:var(--ink);background:var(--paper);border:1.5px solid var(--line);border-radius:11px;padding:9px 40px 9px 12px;transition:.16s}
+  .field input[type=text]{font-size:1rem}
+  .field select{font-family:"Noto Sans TC";font-size:.95rem;font-weight:500;padding-right:12px;-webkit-appearance:none;appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238A727C' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center}
+  .field input:focus,.field select:focus{outline:none;border-color:var(--rose);background:#fff;box-shadow:0 0 0 4px var(--rose-soft)}
+  .field .unit{position:absolute;right:12px;color:var(--ink-soft);font-size:.8rem;pointer-events:none}
+  .field.opt label::after{content:"（選填）";color:var(--line);font-size:.72rem}
+
+  .seg{display:inline-flex;background:var(--paper);border:1.5px solid var(--line);border-radius:11px;padding:4px;gap:4px;flex-wrap:wrap}
+  .seg button{font-family:"Noto Sans TC";font-weight:700;font-size:.86rem;border:none;cursor:pointer;padding:7px 14px;border-radius:8px;background:transparent;color:var(--ink-soft);transition:.16s}
+  .seg button.on{background:var(--rose);color:#fff}
+  .seg.sage button.on{background:var(--sage)} .seg.plum button.on{background:var(--plum)}
+  .row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:4px}
+  .row .lbl{font-size:.82rem;color:var(--ink-soft);font-weight:500}
+
+  /* summary */
+  .sumbar{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+  @media(max-width:560px){.sumbar{grid-template-columns:1fr 1fr}}
+  .sum{background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:12px 13px;position:relative;overflow:hidden}
+  .sum::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--gold)}
+  .sum.a::before{background:var(--rose)} .sum.b::before{background:var(--plum)} .sum.c::before{background:var(--sage)}
+  .sum .k{font-size:.74rem;color:var(--ink-soft);margin-bottom:3px}
+  .sum .v{font-family:"Noto Serif TC",serif;font-weight:900;font-size:1.35rem;line-height:1}
+  .sum .v small{font-size:.72rem;font-weight:500;color:var(--ink-soft);margin-left:2px}
+  .macro-line{margin-top:12px;font-size:.9rem;color:#5f4750;background:var(--sage-soft);border-radius:11px;padding:11px 14px;line-height:1.7}
+  .macro-line b{font-family:"Noto Serif TC",serif;color:#3e4a30}
+  .plantime{margin-top:12px;border:1.5px solid var(--line);border-radius:13px;padding:14px 16px;font-size:.92rem;line-height:1.75;background:#fff}
+  .plantime b{font-family:"Noto Serif TC",serif;color:var(--ink)}
+  .plantime .big{font-family:"Noto Serif TC",serif;font-weight:900;font-size:1.3rem;color:var(--rose)}
+  .badge{display:inline-block;font-size:.76rem;font-weight:700;padding:3px 10px;border-radius:999px;margin-left:6px;white-space:nowrap}
+  .badge.in{background:var(--sage-soft);color:var(--sage)}
+  .badge.slow{background:#EAEEF4;color:#5f6d86}
+  .badge.fast{background:#FCEEE4;color:var(--warn)}
+  .alert{border-radius:12px;padding:12px 14px;font-size:.86rem;line-height:1.6;margin-top:12px;display:none}
+  .alert.show{display:block}
+  .alert.warn{background:#FCEEE4;border:1px solid #F0C9AC;color:#8C4A22}
+
+  .actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:6px}
+  .btn{font-family:"Noto Serif TC",serif;font-weight:700;font-size:1rem;border:none;border-radius:14px;padding:14px 22px;cursor:pointer;transition:.16s;flex:1;min-width:180px}
+  .btn:active{transform:translateY(1px)}
+  .btn.primary{color:#fff;background:linear-gradient(135deg,#B85C4D,#9C4a3d);box-shadow:0 12px 26px -14px var(--rose)}
+  .btn.save{color:#fff;background:linear-gradient(135deg,#7E8C6A,#63704f);box-shadow:0 12px 26px -14px var(--sage)}
+  .btn.ghost{background:var(--paper);color:var(--ink);border:1.5px solid var(--line);flex:none;min-width:0;font-size:.9rem;padding:11px 16px}
+  .toast{margin-top:14px;font-size:.9rem;text-align:center;display:none}
+  .toast.show{display:block} .toast.ok{color:var(--sage)} .toast.err{color:var(--warn)}
+
+  /* list */
+  .searchbar{display:flex;gap:10px;align-items:center;margin-bottom:16px;flex-wrap:wrap}
+  .searchbar input{flex:1;min-width:180px;font-size:1rem;font-family:"Noto Sans TC";border:1.5px solid var(--line);border-radius:11px;padding:10px 14px;background:#fff}
+  .searchbar input:focus{outline:none;border-color:var(--rose);box-shadow:0 0 0 4px var(--rose-soft)}
+  .stu{display:flex;align-items:center;gap:14px;padding:15px;border:1px solid var(--line);border-radius:15px;margin-bottom:10px;background:#fff;cursor:pointer;transition:.14s}
+  .stu:hover{border-color:var(--rose);box-shadow:var(--shadow);transform:translateY(-1px)}
+  .stu .av{width:46px;height:46px;flex:none;border-radius:50%;background:var(--rose-soft);color:var(--rose);display:flex;align-items:center;justify-content:center;font-family:"Noto Serif TC",serif;font-weight:900;font-size:1.2rem}
+  .stu .mid{flex:1;min-width:0}
+  .stu .nm{font-family:"Noto Serif TC",serif;font-weight:700;font-size:1.05rem}
+  .stu .meta{font-size:.78rem;color:var(--ink-soft);margin-top:2px}
+  .stu .chg{text-align:right;font-family:"Noto Serif TC",serif}
+  .stu .chg .big{font-weight:900;font-size:1.25rem}
+  .stu .chg .big.down{color:var(--sage)} .stu .chg .big.up{color:var(--warn)} .stu .chg .big.flat{color:var(--ink-soft)}
+  .stu .chg small{display:block;font-family:"Noto Sans TC";font-size:.72rem;color:var(--ink-soft)}
+  .empty{text-align:center;color:var(--ink-soft);padding:40px 20px;font-size:.95rem;line-height:1.8}
+  .backup{display:flex;gap:10px;flex-wrap:wrap;margin-top:4px}
+
+  /* analysis */
+  .picker{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:4px}
+  .picker select{flex:1;min-width:200px;font-family:"Noto Sans TC";font-size:1rem;font-weight:600;border:1.5px solid var(--line);border-radius:11px;padding:10px 14px;background:#fff;-webkit-appearance:none;appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238A727C' stroke-width='1.6' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center}
+  .deltas{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px}
+  @media(max-width:560px){.deltas{grid-template-columns:1fr 1fr}}
+  .delta{background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:13px}
+  .delta .k{font-size:.76rem;color:var(--ink-soft)}
+  .delta .now{font-family:"Noto Serif TC",serif;font-weight:900;font-size:1.5rem;line-height:1.1;margin-top:3px}
+  .delta .d{font-size:.82rem;font-weight:700;margin-top:3px}
+  .delta .d.down{color:var(--sage)} .delta .d.up{color:var(--warn)} .delta .d.flat{color:var(--ink-soft)}
+  .chartcard{border:1px solid var(--line);border-radius:14px;padding:14px 8px 8px;margin-bottom:14px;background:#fff}
+  .chartcard h4{font-family:"Noto Serif TC",serif;font-size:.95rem;margin:0 0 4px 12px;color:var(--ink)}
+  .htbl{width:100%;border-collapse:collapse;font-size:.82rem;margin-top:6px}
+  .htbl th,.htbl td{border:1px solid var(--line);padding:7px 9px;text-align:center}
+  .htbl thead th{background:var(--paper);color:var(--ink-soft);font-weight:700;font-size:.76rem}
+  .htbl tbody th{background:#FAF5F1;font-family:"Noto Serif TC",serif;font-weight:700;text-align:left;white-space:nowrap}
+  .htbl td{font-family:"Noto Serif TC",serif}
+  .htbl .del{padding:3px 0}
+
+  footer{text-align:center;color:var(--ink-soft);font-size:.76rem;padding:10px 0;letter-spacing:.04em}
+  footer b{font-family:"Noto Serif TC",serif;color:var(--rose);letter-spacing:.12em}
+
+  /* ============ hidden A4 report styles ============ */
+  #reportWrap{position:fixed;left:-10000px;top:0;z-index:-1}
+  .report{width:794px;background:#fff;color:#3B2831;font-family:"Noto Sans TC",sans-serif;padding:46px 52px;box-sizing:border-box}
+  .report .r-top{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2px solid var(--rose);padding-bottom:16px}
+  .report .r-brand{font-family:"Noto Serif TC",serif;font-weight:900;font-size:27px;letter-spacing:.16em;color:var(--rose);line-height:1.1}
+  .report .r-brand span{display:block;font-family:"Noto Sans TC";font-weight:500;font-size:11px;letter-spacing:.28em;color:var(--ink-soft);margin-top:6px}
+  .report .r-title{text-align:right;font-family:"Noto Serif TC",serif;font-weight:700;font-size:19px}
+  .report .r-title small{display:block;font-family:"Noto Sans TC";font-weight:400;font-size:12px;color:var(--ink-soft);margin-top:5px;letter-spacing:.05em}
+  .report .r-meta{display:flex;gap:30px;font-size:13px;color:#5f4750;margin:16px 0 18px}
+  .report .r-meta b{color:var(--ink);font-weight:700}
+  .report .r-grid{display:grid;grid-template-columns:1fr 1fr;gap:15px}
+  .report .r-panel{border:1px solid var(--line);border-radius:14px;padding:16px 18px}
+  .report .r-panel.now{background:#FCF3F0} .report .r-panel.goal{background:#F6F0F5}
+  .report .r-panel.food{background:#F3F5EE;grid-column:1/-1;margin-top:15px}
+  .report .r-h{font-family:"Noto Serif TC",serif;font-weight:700;font-size:15px;margin-bottom:13px;display:flex;align-items:center;gap:8px}
+  .report .r-h .pip{width:7px;height:16px;border-radius:3px;display:inline-block}
+  .report .r-list{display:grid;grid-template-columns:1fr 1fr;gap:9px 20px;font-size:13px}
+  .report .r-list .li{display:flex;justify-content:space-between;gap:8px;border-bottom:1px dashed #E3D3CB;padding-bottom:6px;color:#6f5760}
+  .report .r-list .li b{font-family:"Noto Serif TC",serif;font-weight:700;color:var(--ink)}
+  .report .r-macro{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+  .report .r-mac{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 10px;text-align:center}
+  .report .r-mac .t{font-size:12px;color:var(--ink-soft)}
+  .report .r-mac .n{font-family:"Noto Serif TC",serif;font-weight:900;font-size:25px;margin-top:3px;color:var(--ink)}
+  .report .r-mac .n small{font-size:12px;color:var(--ink-soft);font-weight:500}
+  .report .r-mac .kc{font-size:11px;color:var(--ink-soft);margin-top:3px}
+  .report .r-veg{font-size:12px;color:#556047;margin-top:13px;line-height:1.7} .report .r-veg b{color:#4e5a3f;font-weight:700}
+  .report .r-note{font-size:11.5px;color:#6f5760;line-height:1.75;border-top:1px solid var(--line);margin-top:18px;padding-top:13px}
+  .report .r-foot{display:flex;justify-content:space-between;font-size:11px;color:var(--ink-soft);margin-top:12px;letter-spacing:.05em}
+  .report .r-foot .bd{font-family:"Noto Serif TC",serif;color:var(--rose);font-weight:700;letter-spacing:.12em}
+  .report .info-line{font-size:12.5px;color:#5f4750;line-height:2.1;margin:14px 0 8px}
+  .report .info-line .u{display:inline-block;min-width:64px;border-bottom:1px solid #C9B6AE;text-align:center;color:var(--ink);font-weight:700;padding:0 4px}
+  .mtbl{width:100%;border-collapse:collapse;table-layout:fixed;margin-top:6px}
+  .mtbl caption{caption-side:top;text-align:left;font-family:"Noto Serif TC",serif;font-weight:700;font-size:13.5px;margin-bottom:6px;color:var(--ink)}
+  .mtbl th,.mtbl td{border:1px solid #E3D3CB;font-size:11px}
+  .mtbl thead th{background:#EFEAE6;height:22px;color:#6f5760;font-weight:500;font-size:10.5px}
+  .mtbl thead th.rowlab{background:#EAD9D2}
+  .mtbl tbody th{text-align:left;padding:3px 8px;background:#FAF5F1;font-weight:700;color:var(--ink);line-height:1.2}
+  .mtbl tbody th small{display:block;font-weight:400;font-size:8.5px;color:var(--ink-soft)}
+  .mtbl tbody td{height:22px;text-align:center;color:var(--ink);font-family:"Noto Serif TC",serif;font-size:11.5px}
+  .mtbl tr.diff th{background:#F3EEEA;color:var(--ink-soft);font-weight:500} .mtbl tr.diff td{background:#FBF8F5}
+  .mtbl td.pf{background:#FCF3F0;font-weight:700;color:var(--rose)}
+  .tipbox{display:flex;gap:12px;margin-top:11px}
+  .tip{flex:1;background:#F3F5EE;border:1px solid #DEE4D3;border-radius:12px;padding:11px 13px;font-size:10.5px;line-height:1.7;color:#556047}
+  .tip b{color:#4e5a3f;display:block;margin-bottom:3px;font-size:12px;font-family:"Noto Serif TC",serif}
+  .tip.rose{background:#FCF3F0;border-color:#F0D8D0;color:#7a5850} .tip.rose b{color:var(--rose)}
+  .dtbl{width:100%;border-collapse:collapse;table-layout:fixed;margin-top:8px}
+  .dtbl th,.dtbl td{border:1px solid #E3D3CB}
+  .dtbl thead th{background:#EFEAE6;height:28px;font-size:11.5px;color:#6f5760;font-weight:700}
+  .dtbl tbody td{height:90px;vertical-align:top;padding:5px 6px;font-size:10px}
+  .dtbl tbody td.day{background:#FAF5F1;text-align:center;font-family:"Noto Serif TC",serif;font-weight:700;font-size:12px;vertical-align:middle;color:var(--ink)}
+  .target-banner{background:#F3F5EE;border:1px solid #DEE4D3;border-radius:12px;padding:13px 16px;font-size:12.5px;color:#4e5a3f;line-height:1.9;margin-top:14px}
+  .target-banner b{font-family:"Noto Serif TC",serif;color:#3e4a30}
+  .target-banner .cal{font-family:"Noto Serif TC",serif;font-weight:900;font-size:17px;color:var(--sage)}
+  /* analysis report page */
+  .ra-delta{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0}
+  .ra-d{border:1px solid var(--line);border-radius:12px;padding:12px;background:#FCF3F0}
+  .ra-d .k{font-size:11px;color:var(--ink-soft)} .ra-d .n{font-family:"Noto Serif TC",serif;font-weight:900;font-size:20px;margin-top:2px}
+  .ra-d .c{font-size:11px;font-weight:700;margin-top:2px} .ra-d .c.down{color:var(--sage)} .ra-d .c.up{color:var(--warn)}
+  .ra-chart{border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px}
+  .ra-chart h4{font-family:"Noto Serif TC",serif;font-size:13px;margin:0 0 4px 4px}
+  .rhtbl{width:100%;border-collapse:collapse;font-size:11px;margin-top:6px}
+  .rhtbl th,.rhtbl td{border:1px solid #E3D3CB;padding:5px 6px;text-align:center}
+  .rhtbl thead th{background:#EFEAE6;color:#6f5760;font-weight:700}
+  .rhtbl tbody th{background:#FAF5F1;text-align:left;font-family:"Noto Serif TC",serif;font-weight:700;white-space:nowrap}
+  .rhtbl td{font-family:"Noto Serif TC",serif}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topnav">
+    <div class="brand">TATA FLOW<span>學員管理後台</span></div>
+    <div class="tabs" id="tabs">
+      <button data-v="entry" class="on">新增 / 編輯</button>
+      <button data-v="list">學員名單</button>
+      <button data-v="analysis">數據分析</button>
+    </div>
+  </div>
+
+  <!-- ========== VIEW: ENTRY ========== -->
+  <div class="view" id="view-entry">
+    <section>
+      <div class="sec-head"><span class="tag now">學員</span><h2>基本資料</h2><span class="hint" id="entryMode">新增紀錄</span></div>
+      <div class="grid">
+        <div class="field"><label>姓名 *</label><div class="ipt"><input id="cname" type="text" placeholder="學員姓名"></div></div>
+        <div class="field"><label>聯絡方式 (LINE / 電話)</label><div class="ipt"><input id="ccontact" type="text" placeholder=""></div></div>
+        <div class="field"><label>量測日期 *</label><div class="ipt"><input id="cdate" type="date"></div></div>
+        <div class="field"><label>身高</label><div class="ipt"><input id="h" type="number" inputmode="decimal" value="160"><span class="unit">cm</span></div></div>
+      </div>
+      <div class="row" style="margin-top:14px"><span class="lbl">生理性別</span>
+        <div class="seg" id="gender"><button data-g="f" class="on">女性</button><button data-g="m">男性</button></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-head"><span class="tag now">現況</span><h2>本次數據</h2></div>
+      <div class="grid g3">
+        <div class="field"><label>體重</label><div class="ipt"><input id="w" type="number" inputmode="decimal" value="60"><span class="unit">kg</span></div></div>
+        <div class="field"><label>年齡</label><div class="ipt"><input id="a" type="number" inputmode="numeric" value="40"><span class="unit">歲</span></div></div>
+        <div class="field"><label>體脂率</label><div class="ipt"><input id="bf" type="number" inputmode="decimal" value="30"><span class="unit">%</span></div></div>
+      </div>
+      <div class="sumbar" style="margin-top:16px">
+        <div class="sum a"><div class="k">基礎代謝 BMR</div><div class="v"><span id="s_bmr">—</span><small>大卡</small></div></div>
+        <div class="sum"><div class="k">現況 BMI</div><div class="v"><span id="s_bmi">—</span> <small id="s_bmiT"></small></div></div>
+        <div class="sum"><div class="k">脂肪重</div><div class="v"><span id="s_fat">—</span><small>kg</small></div></div>
+        <div class="sum c"><div class="k">代謝率</div><div class="v"><span id="s_rate">—</span></div></div>
+      </div>
+    </section>
+
+    <section>
+      <div class="sec-head"><span class="tag goal">目標</span><h2>瘦身目標</h2></div>
+      <div class="grid">
+        <div class="field"><label>目標體重</label><div class="ipt"><input id="wt" type="number" inputmode="decimal" value="52"><span class="unit">kg</span></div></div>
+        <div class="field"><label>目標體脂率</label><div class="ipt"><input id="bft" type="number" inputmode="decimal" value="25"><span class="unit">%</span></div></div>
+      </div>
+      <div class="sumbar" style="margin-top:4px;grid-template-columns:repeat(3,1fr)">
+        <div class="sum b"><div class="k">總共要減</div><div class="v"><span id="s_total">—</span><small>kg</small></div></div>
+        <div class="sum b"><div class="k">其中脂肪</div><div class="v"><span id="s_fatloss">—</span><small>kg</small></div></div>
+        <div class="sum"><div class="k">健康速度（每月）</div><div class="v" style="font-size:1.05rem"><span id="s_band">—</span></div></div>
+      </div>
+      <p style="font-size:.78rem;color:var(--ink-soft);margin-top:10px;line-height:1.6">＊「健康速度」是每月體重 3–5% 的安全範圍（參考）；實際達標時間會依下方飲食＋運動計畫計算。</p>
+      <div class="alert warn" id="a_bmi"></div>
+    </section>
+
+    <section>
+      <div class="sec-head"><span class="tag food">飲食</span><h2>每日消耗與飲食份量</h2></div>
+      <div class="grid">
+        <div class="field"><label>活動程度</label><div class="ipt"><select id="activity">
+          <option value="1.2">完全沒有運動</option><option value="1.375" selected>每週三次內</option>
+          <option value="1.42">每週運動四次</option><option value="1.46">每週運動五次</option>
+          <option value="1.63">每週運動六次</option><option value="1.72">每週運動七次</option>
+          <option value="1.9">超激烈（1天2次）</option></select></div></div>
+        <div class="field"><label>維持熱量 TDEE（可微調）</label><div class="ipt"><input id="tdee" type="number" inputmode="numeric" value="1650"><span class="unit">大卡</span></div></div>
+      </div>
+      <div class="row" style="margin-top:14px"><span class="lbl">減脂強度</span>
+        <div class="seg sage" id="strength"><button data-s="0">維持</button><button data-s="-0.10">最少 −10%</button><button data-s="-0.15" class="on">正常 −15%</button><button data-s="-0.25">積極 −25%</button></div>
+      </div>
+      <div class="grid" style="margin-top:14px">
+        <div class="field"><label>每日目標熱量（實際要吃，可微調）</label><div class="ipt"><input id="target" type="number" inputmode="numeric" value="1400"><span class="unit">大卡</span></div></div>
+        <div class="field"><label>飲食型態</label>
+          <div class="seg sage" id="diet" style="margin-top:2px"><button data-d="balance" class="on">均衡</button><button data-d="lowcarb">低醣</button></div></div>
+      </div>
+      <div class="macro-line" id="macroLine">—</div>
+      <div class="plantime" id="planTime">—</div>
+    </section>
+
+    <section>
+      <div class="sec-head"><span class="tag meas">圍度</span><h2>六圍測量</h2><span class="hint">選填 · 填了才能做圍度趨勢分析</span></div>
+      <div class="grid g3">
+        <div class="field opt"><label>右上臂圍</label><div class="ipt"><input id="c_arm" type="number" inputmode="decimal"><span class="unit">cm</span></div></div>
+        <div class="field opt"><label>腰圍</label><div class="ipt"><input id="c_waist" type="number" inputmode="decimal"><span class="unit">cm</span></div></div>
+        <div class="field opt"><label>腹圍</label><div class="ipt"><input id="c_belly" type="number" inputmode="decimal"><span class="unit">cm</span></div></div>
+        <div class="field opt"><label>臀圍</label><div class="ipt"><input id="c_hip" type="number" inputmode="decimal"><span class="unit">cm</span></div></div>
+        <div class="field opt"><label>右大腿圍</label><div class="ipt"><input id="c_thigh" type="number" inputmode="decimal"><span class="unit">cm</span></div></div>
+        <div class="field opt"><label>右小腿圍</label><div class="ipt"><input id="c_calf" type="number" inputmode="decimal"><span class="unit">cm</span></div></div>
+      </div>
+      <div class="field" style="margin-top:12px"><label>備註（本次諮詢重點、狀態…）</label>
+        <div class="ipt"><input id="notes" type="text" placeholder="選填"></div></div>
+    </section>
+
+    <section>
+      <div class="actions">
+        <button class="btn save" id="saveBtn">＋ 儲存到後台</button>
+        <button class="btn primary" id="pdfBtn">產生學員 PDF（3 頁）</button>
+      </div>
+      <div class="actions" style="margin-top:10px">
+        <button class="btn ghost" id="clearBtn">清空表單</button>
+      </div>
+      <div class="toast" id="entryToast"></div>
+    </section>
+  </div>
+
+  <!-- ========== VIEW: LIST ========== -->
+  <div class="view hidden" id="view-list">
+    <section>
+      <div class="sec-head"><span class="tag now">名單</span><h2>學員統計</h2><span class="hint" id="listCount"></span></div>
+      <div class="searchbar"><input id="search" type="text" placeholder="搜尋姓名…"></div>
+      <div id="stuList"></div>
+    </section>
+    <section>
+      <div class="sec-head"><span class="tag meas">備份</span><h2>資料備份與匯出</h2></div>
+      <p style="font-size:.86rem;color:var(--ink-soft);margin-bottom:12px;line-height:1.7">資料儲存在<b>這台裝置的瀏覽器</b>裡。建議定期「匯出備份檔」保存；換裝置或清快取後可用「還原」把資料讀回來。CSV 可用 Excel／Google 試算表開啟。</p>
+      <div class="backup">
+        <button class="btn ghost" id="expJson">⬇ 匯出備份 (JSON)</button>
+        <button class="btn ghost" id="expCsv">⬇ 匯出 Excel (CSV)</button>
+        <button class="btn ghost" id="impJson">⬆ 還原備份</button>
+        <input type="file" id="impFile" accept="application/json,.json" style="display:none">
+      </div>
+      <div class="toast" id="listToast"></div>
+    </section>
+  </div>
+
+  <!-- ========== VIEW: ANALYSIS ========== -->
+  <div class="view hidden" id="view-analysis">
+    <section>
+      <div class="sec-head"><span class="tag goal">分析</span><h2>學員數據分析</h2></div>
+      <div class="picker"><select id="anaPick"><option value="">— 選擇學員 —</option></select>
+        <button class="btn primary" id="anaPdfBtn" style="flex:none;min-width:0;padding:11px 18px;font-size:.92rem">產生分析報告 PDF</button></div>
+      <div id="anaBody"><div class="empty">選擇一位學員，查看歷次數據的變化趨勢。</div></div>
+    </section>
+  </div>
+
+  <footer>由 <b>TATA FLOW</b> 學員管理後台 · 資料僅存於本機瀏覽器</footer>
+</div>
+
+<!-- ============ hidden A4 report nodes ============ -->
+<div id="reportWrap" aria-hidden="true">
+  <!-- page1 -->
+  <div id="report" class="report">
+    <div class="r-top"><div class="r-brand">TATA FLOW<span>循環 · 塑形 · 健康瘦身</span></div><div class="r-title">個人化瘦身與飲食計畫<small id="r_date">—</small></div></div>
+    <div class="r-meta"><span>姓名：<b id="r_name">—</b></span><span>聯絡：<b id="r_contact">—</b></span></div>
+    <div class="r-grid">
+      <div class="r-panel now"><div class="r-h"><span class="pip" style="background:var(--rose)"></span>身體現況</div>
+        <div class="r-list">
+          <span class="li">體重<b id="r_w">—</b></span><span class="li">身高<b id="r_h">—</b></span>
+          <span class="li">年齡<b id="r_a">—</b></span><span class="li">性別<b id="r_g">—</b></span>
+          <span class="li">體脂率<b id="r_bf">—</b></span><span class="li">BMI<b id="r_bmi">—</b></span>
+          <span class="li">基礎代謝<b id="r_bmr">—</b></span><span class="li">代謝率<b id="r_rate">—</b></span></div></div>
+      <div class="r-panel goal"><div class="r-h"><span class="pip" style="background:var(--plum)"></span>瘦身目標</div>
+        <div class="r-list">
+          <span class="li">目標體重<b id="r_wt">—</b></span><span class="li">目標體脂<b id="r_bft">—</b></span>
+          <span class="li">目標BMI<b id="r_bmig">—</b></span><span class="li">總共要減<b id="r_total">—</b></span>
+          <span class="li">脂肪重量<b id="r_fat">—</b></span><span class="li">每月速度<b id="r_pace">—</b></span>
+          <span class="li" style="grid-column:1/-1">預估達標時間<b id="r_months">—</b></span></div></div>
+      <div class="r-panel food"><div class="r-h"><span class="pip" style="background:var(--sage)"></span>每日飲食建議（<span id="r_dietname">—</span>）</div>
+        <div class="r-list" style="grid-template-columns:1fr 1fr 1fr">
+          <span class="li">維持熱量 TDEE<b id="r_tdee">—</b></span><span class="li">每日建議攝取<b id="r_target">—</b></span><span class="li">每日熱量差<b id="r_def">—</b></span></div>
+        <div class="r-macro">
+          <div class="r-mac"><div class="t">碳水化合物 <span id="r_pC">—</span></div><div class="n"><span id="r_ptC">—</span><small> 份</small></div><div class="kc"><span id="r_kcC">—</span> 大卡</div></div>
+          <div class="r-mac"><div class="t">蛋白質 <span id="r_pP">—</span></div><div class="n"><span id="r_ptP">—</span><small> 份</small></div><div class="kc"><span id="r_kcP">—</span> 大卡</div></div>
+          <div class="r-mac"><div class="t">油脂 <span id="r_pF">—</span></div><div class="n"><span id="r_ptF">—</span><small> 份</small></div><div class="kc"><span id="r_kcF">—</span> 大卡</div></div></div>
+        <div class="r-veg">🥬 <b>蔬菜每天至少 5 份</b>（可更多）、<b>水果每天最多 1 份</b>。碳水與蛋白質 1 份＝1 個拳頭；油脂 1 份＝1 湯匙橄欖油（15ml）或 5 顆腰果。依此節奏，<b>減 1kg 約需 <span id="r_days">—</span> 天</b>。</div></div>
+    </div>
+    <div class="r-note">💗 提醒：每月瘦身速度與熱量換算皆為平均值參考，實際會因體質、飲食品質與生活習慣而異；基礎代謝量測可能有 10–15% 誤差。健康不是越少吃越好，長期低於基礎代謝並不理想。慢慢來，一樣會抵達。</div>
+    <div class="r-foot"><span class="bd">TATA FLOW</span><span id="r_foot_date">—</span></div>
+  </div>
+
+  <!-- page2 -->
+  <div id="report2" class="report">
+    <div class="r-top"><div class="r-brand">TATA FLOW<span>循環 · 塑形 · 健康瘦身</span></div><div class="r-title">體態數據測量表<small>每週固定測量一次</small></div></div>
+    <div class="info-line">姓名 <span class="u" id="m_name">&nbsp;</span>　性別 <span class="u" id="m_gender">&nbsp;</span>　年齡 <span class="u" id="m_age">&nbsp;</span> 歲　身高 <span class="u" id="m_h">&nbsp;</span> cm　職業 <span class="u">&nbsp;</span><br>體脂機(型號) <span class="u">&nbsp;</span>　諮詢師 <span class="u">&nbsp;</span>　電話 <span class="u">&nbsp;</span></div>
+    <table class="mtbl" id="mtblData"></table>
+    <table class="mtbl" id="mtblGirth" style="margin-top:13px"></table>
+    <div class="tipbox">
+      <div class="tip rose"><b>📸 拍體態照（最重要）</b>每週一次、白牆前拍正面／側面／背面。女生緊身運動內衣＋短褲，手叉腰放褲頭不遮肉。手機原相機、不用濾鏡美肌，每次同服裝同背景同角度。</div>
+      <div class="tip"><b>📏 量圍度 & 體重</b>圍度用皮尺；體重計固定早上空腹、都用同一台機器，每週量一次（別天天量）。體態照＋圍度＋數據一起比對，成果最真實。</div>
+    </div>
+    <div class="r-foot"><span class="bd">TATA FLOW</span><span>體態數據測量表</span></div>
+  </div>
+
+  <!-- page3 -->
+  <div id="report3" class="report">
+    <div class="r-top"><div class="r-brand">TATA FLOW<span>循環 · 塑形 · 健康瘦身</span></div><div class="r-title">飲食記錄表<small>對照每日目標份量．誠實紀錄</small></div></div>
+    <div class="target-banner">🎯 <b>每日目標</b>　<span class="cal"><span id="b_cal">—</span> 大卡</span>　｜　碳水 <b><span id="b_c">—</span></b> 份　蛋白質 <b><span id="b_p">—</span></b> 份　油脂 <b><span id="b_f">—</span></b> 份　蔬菜 <b>5+</b> 份　水果 <b>≤1</b> 份<br><span style="font-size:11px;color:#6a7357">份量抓法：碳水 / 蛋白質 1 份＝1 個拳頭；油脂 1 份＝1 湯匙橄欖油（15ml）或 5 顆腰果</span></div>
+    <table class="dtbl" id="dtbl"></table>
+    <div class="tip" style="margin-top:12px"><b style="color:var(--sage)">✍️ 使用方式</b>每天記下實際吃的內容，對照上方目標份量檢視。三餐＋點心都寫，順手記錄飲水與運動。紀錄是為了看見自己的進步，不是為了苛責自己——誠實就是最好的開始。</div>
+    <div class="r-foot"><span class="bd">TATA FLOW</span><span>飲食記錄表</span></div>
+  </div>
+
+  <!-- analysis report -->
+  <div id="reportA" class="report">
+    <div class="r-top"><div class="r-brand">TATA FLOW<span>循環 · 塑形 · 健康瘦身</span></div><div class="r-title">數據分析報告<small id="ra_date">—</small></div></div>
+    <div class="r-meta"><span>姓名：<b id="ra_name">—</b></span><span>追蹤區間：<b id="ra_range">—</b></span><span>紀錄次數：<b id="ra_count">—</b></span></div>
+    <div id="ra_body"></div>
+    <div class="r-note">💗 數據為每次測量的參考值，含正常波動（含水量、量測誤差 10–15%）。真正的成果請搭配體態照一起比對。持續、穩定，比一時的數字更重要。</div>
+    <div class="r-foot"><span class="bd">TATA FLOW</span><span id="ra_foot">—</span></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+(function(){
+  const $=id=>document.getElementById(id);
+  const LS='tataflow_students_v1';
+  const DIETS={balance:{c:.5,p:.25,f:.25,label:'均衡飲食'},lowcarb:{c:.2,p:.3,f:.5,label:'低醣飲食'}};
+  const DIV={c:240,p:60,f:120};
+  const ACT={'1.2':'完全沒有運動','1.375':'每週三次內','1.42':'每週運動四次','1.46':'每週運動五次','1.63':'每週運動六次','1.72':'每週運動七次','1.9':'超激烈'};
+  const STR={'0':'維持','-0.10':'最少 −10%','-0.15':'正常 −15%','-0.25':'積極 −25%'};
+  const CIRC=[['arm','右上臂圍'],['waist','腰圍'],['belly','腹圍'],['hip','臀圍'],['thigh','右大腿圍'],['calf','右小腿圍']];
+
+  let gender='f', strength=-0.15, diet='balance', editKey=null;
+
+  const num=el=>{const v=parseFloat(el.value);return isFinite(v)?v:0;};
+  const fmt=(n,d)=>isFinite(n)?(Math.round(n*Math.pow(10,d))/Math.pow(10,d)).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:d}):'—';
+  const todayISO=()=>{const n=new Date();return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');};
+  function bmiBand(b){if(b<18.5)return'過輕';if(b<24)return'健康';if(b<27)return'過重';return'肥胖';}
+
+  // ---------- compute ----------
+  function readForm(){
+    const circ={};CIRC.forEach(([k])=>{const v=parseFloat($('c_'+k).value);if(isFinite(v))circ[k]=v;});
+    return {
+      name:($('cname').value||'').trim(), contact:($('ccontact').value||'').trim(),
+      date:$('cdate').value||todayISO(), gender, genderTxt:gender==='f'?'女':'男',
+      height:num($('h')), weight:num($('w')), age:num($('a')), bodyFat:num($('bf')),
+      targetWeight:num($('wt')), targetBodyFat:num($('bft')),
+      activity:$('activity').value, tdee:num($('tdee')), strength, diet,
+      circ, notes:($('notes').value||'').trim()
+    };
+  }
+  function compute(f){
+    const hm=f.height/100;
+    const bmr=f.gender==='f'?655+9.6*f.weight+1.8*f.height-4.7*f.age:66+13.7*f.weight+5*f.height-6.8*f.age;
+    const bmi=hm>0?f.weight/(hm*hm):0, bmiGoal=hm>0?f.targetWeight/(hm*hm):0;
+    const fatMass=f.weight*f.bodyFat/100;
+    const totalLoss=f.weight-f.targetWeight, fatToLose=f.weight*f.bodyFat/100-f.targetWeight*f.targetBodyFat/100;
+    const target=f.tdee*(1+f.strength);           // 建議目標熱量（可由 target 欄位覆寫）
+    const targetCal=num($('target'))||Math.round(target);
+    const r=DIETS[f.diet];
+    const kcC=targetCal*r.c,kcP=targetCal*r.p,kcF=targetCal*r.f;
+    const deficit=f.tdee-targetCal;
+    // 健康速度 = 每月體重 3–5%（安全參考）；實際達標時間 = 依熱量差計算（1kg 脂肪 ≈ 7700 大卡）
+    const healthyMin=f.weight*0.03, healthyMax=f.weight*0.05;
+    const planMonthlyLoss=deficit>0?deficit*30/7700:0;                    // 每月實際約減 kg
+    const planMonths=totalLoss>0&&planMonthlyLoss>0?totalLoss/planMonthlyLoss:0;
+    const pacePct=f.weight>0?planMonthlyLoss/f.weight*100:0;
+    let band='none';
+    if(planMonthlyLoss>0)band=planMonthlyLoss<healthyMin?'slow':(planMonthlyLoss>healthyMax?'fast':'in');
+    return {bmr,bmrRate:f.weight>0?bmr/f.weight:0,bmi,bmiBand:bmiBand(bmi),bmiGoal,bmiGoalBand:bmiBand(bmiGoal),
+      fatMass,totalLoss,fatToLose,
+      healthyMin,healthyMax,planMonthlyLoss,planMonths,pacePct,band,
+      targetCal,dietKey:f.diet,dietLabel:r.label,ratio:r,
+      kcC,kcP,kcF,ptC:kcC/DIV.c,ptP:kcP/DIV.p,ptF:kcF/DIV.f,pC:r.c*100,pP:r.p*100,pF:r.f*100,
+      deficit,days1kg:deficit>0?7700/deficit:0};
+  }
+
+  function refreshTDEEfield(){$('tdee').value=Math.round(currentBMR()*parseFloat($('activity').value));}
+  function refreshTargetField(){$('target').value=Math.round((num($('tdee')))*(1+strength));}
+  function currentBMR(){const f=readForm();return f.gender==='f'?655+9.6*f.weight+1.8*f.height-4.7*f.age:66+13.7*f.weight+5*f.height-6.8*f.age;}
+
+  function renderSummary(){
+    const f=readForm(),c=compute(f);
+    $('s_bmr').textContent=fmt(c.bmr,0); $('s_bmi').textContent=fmt(c.bmi,1); $('s_bmiT').textContent='('+c.bmiBand+')';
+    $('s_fat').textContent=fmt(c.fatMass,1); $('s_rate').textContent=fmt(c.bmrRate,1);
+    $('s_total').textContent=fmt(c.totalLoss,1); $('s_fatloss').textContent=fmt(c.fatToLose,1);
+    $('s_band').innerHTML=fmt(c.healthyMin,1)+'–'+fmt(c.healthyMax,1)+' <small style="font-size:.62em;color:#8A727C">kg</small>';
+    $('macroLine').innerHTML='每日建議 <b>'+fmt(c.targetCal,0)+' 大卡</b>（'+c.dietLabel+'）｜碳水 <b>'+fmt(c.ptC,1)+'</b> 份　蛋白質 <b>'+fmt(c.ptP,1)+'</b> 份　油脂 <b>'+fmt(c.ptF,1)+'</b> 份　蔬菜 5+ 份　水果 ≤1 份';
+    renderPlanTime(c);
+    const al=$('a_bmi');al.classList.remove('show');
+    if(c.bmiGoal>0&&c.bmiGoal<18.5){al.classList.add('show');al.innerHTML='⚠️ 目標 BMI '+fmt(c.bmiGoal,1)+' 低於健康下限（18.5）。建議目標體重不低於 '+fmt(18.5*(f.height/100)**2,1)+' kg，更長久也更好維持。';}
+    return {f,c};
+  }
+  function renderPlanTime(c){
+    const el=$('planTime');
+    if(c.totalLoss<=0){el.innerHTML='<span class="big">已達標 🎉</span>　目前體重已達到或低於目標。';return;}
+    if(c.deficit<=0){el.innerHTML='目前<b>每日熱量差 '+fmt(c.deficit,0)+' 大卡（≤ 0）</b>，這份飲食不會造成減重。若要減重，請調低「每日目標熱量」或提高活動量。';return;}
+    const badge=c.band==='in'?'<span class="badge in">✓ 在健康區間內</span>':(c.band==='slow'?'<span class="badge slow">溫和 · 低於下限</span>':'<span class="badge fast">⚠️ 偏快</span>');
+    let h='依這份<b>飲食＋運動</b>計畫：每日熱量差 <b>'+fmt(c.deficit,0)+'</b> 大卡，每月約減 <b>'+fmt(c.planMonthlyLoss,1)+'</b> kg（體重的 '+fmt(c.pacePct,1)+'%）'+badge
+      +'<br>減 1kg 約 '+fmt(c.days1kg,1)+' 天　→　要減 '+fmt(c.totalLoss,1)+'kg　<span class="big">預估 '+fmt(c.planMonths,1)+' 個月</span> 達標';
+    if(c.band==='slow')h+='<br><span style="font-size:.82rem;color:var(--ink-soft)">此速度低於健康區間下限（'+fmt(c.healthyMin,1)+' kg/月），很溫和、很安全；想加快可增加活動量，或在「不低於基礎代謝」的前提下再降一點每日熱量。</span>';
+    if(c.band==='fast')h+='<br><span style="font-size:.82rem;color:var(--warn)">此速度超過健康區間上限（'+fmt(c.healthyMax,1)+' kg/月），建議放緩，別讓每日攝取低於基礎代謝。</span>';
+    el.innerHTML=h;
+  }
+
+  // ---------- storage ----------
+  function loadDB(){try{return JSON.parse(localStorage.getItem(LS))||{students:[]}}catch(e){return{students:[]}}}
+  function saveDB(db){localStorage.setItem(LS,JSON.stringify(db));}
+  function sessionFrom(f,c){return {date:f.date,age:f.age,weight:f.weight,bodyFat:f.bodyFat,
+    targetWeight:f.targetWeight,targetBodyFat:f.targetBodyFat,
+    activity:f.activity,tdee:f.tdee,strength:f.strength,diet:f.diet,targetCal:c.targetCal,
+    planMonths:round1(c.planMonths),deficit:Math.round(c.deficit),
+    bmr:round1(c.bmr),bmi:round1(c.bmi),fatMass:round1(c.fatMass),bmrRate:round1(c.bmrRate),
+    circ:f.circ,notes:f.notes};}
+  const round1=n=>Math.round(n*10)/10;
+
+  function saveRecord(){
+    const {f,c}=renderSummary();
+    if(!f.name){toast('entryToast','err','請先填寫學員姓名 🙏');$('cname').focus();return;}
+    if(!(f.weight>0&&f.height>0&&f.age>0)){toast('entryToast','err','請確認體重、身高、年齡都已填寫 🙏');return;}
+    const db=loadDB();
+    let st=db.students.find(s=>s.name===f.name);
+    if(!st){st={name:f.name,contact:f.contact,gender:f.gender,height:f.height,sessions:[]};db.students.push(st);}
+    else{st.contact=f.contact;st.gender=f.gender;st.height=f.height;}
+    const sess=sessionFrom(f,c);
+    const i=st.sessions.findIndex(x=>x.date===sess.date);
+    if(i>=0)st.sessions[i]=sess; else st.sessions.push(sess);
+    st.sessions.sort((a,b)=>a.date.localeCompare(b.date));
+    saveDB(db);
+    editKey=f.name+'|'+f.date; $('entryMode').textContent='已儲存：'+f.name+' · '+f.date;
+    toast('entryToast','ok','✓ 已儲存 '+f.name+'（'+f.date+'）的紀錄到後台');
+    refreshAnaPicker();
+  }
+
+  // ---------- list view ----------
+  function renderList(filter){
+    const db=loadDB();
+    const kw=(filter||'').trim();
+    let arr=db.students.slice();
+    if(kw)arr=arr.filter(s=>s.name.indexOf(kw)>=0||(s.contact||'').indexOf(kw)>=0);
+    arr.forEach(s=>s._last=s.sessions.length?s.sessions[s.sessions.length-1].date:'');
+    arr.sort((a,b)=>b._last.localeCompare(a._last));
+    $('listCount').textContent='共 '+db.students.length+' 位學員';
+    const box=$('stuList');
+    if(!arr.length){box.innerHTML='<div class="empty">'+(db.students.length?'找不到符合的學員':'還沒有學員紀錄。到「新增／編輯」頁填完資料，按「儲存到後台」就會出現在這裡。')+'</div>';return;}
+    box.innerHTML=arr.map(s=>{
+      const ss=s.sessions, first=ss[0], last=ss[ss.length-1];
+      const dw=last&&first?last.weight-first.weight:0;
+      const cls=dw<-0.05?'down':(dw>0.05?'up':'flat');
+      const arrow=dw<-0.05?'▼':(dw>0.05?'▲':'—');
+      return '<div class="stu" data-name="'+encodeURIComponent(s.name)+'">'
+        +'<div class="av">'+(s.name[0]||'?')+'</div>'
+        +'<div class="mid"><div class="nm">'+s.name+'</div>'
+        +'<div class="meta">'+ss.length+' 次紀錄 · 最新 '+(last?last.date:'—')+' · 目前 '+(last?last.weight+'kg':'—')+'</div></div>'
+        +'<div class="chg"><div class="big '+cls+'">'+arrow+' '+fmt(Math.abs(dw),1)+'</div><small>kg（首次至今）</small></div></div>';
+    }).join('');
+    box.querySelectorAll('.stu').forEach(el=>el.addEventListener('click',()=>{
+      const nm=decodeURIComponent(el.dataset.name); switchView('analysis'); $('anaPick').value=nm; renderAnalysis(nm);
+    }));
+  }
+
+  // ---------- analysis view ----------
+  function refreshAnaPicker(){
+    const db=loadDB(), sel=$('anaPick'), cur=sel.value;
+    sel.innerHTML='<option value="">— 選擇學員 —</option>'+db.students.map(s=>'<option>'+s.name+'</option>').join('');
+    if(db.students.some(s=>s.name===cur))sel.value=cur;
+  }
+  function metricSeries(st,key){return st.sessions.map(s=>({date:s.date,v:key.indexOf('circ.')===0?(s.circ?s.circ[key.slice(5)]:undefined):s[key]})).filter(p=>isFinite(p.v));}
+  function lineChart(series,color,unit){
+    if(series.length<2)return '<div style="padding:16px;color:#8A727C;font-size:12px">需要至少兩次紀錄才能畫趨勢</div>';
+    const W=660,H=150,PADL=44,PADR=16,PADT=14,PADB=26;
+    const vs=series.map(p=>p.v),mn=Math.min(...vs),mx=Math.max(...vs),span=(mx-mn)||1;
+    const x=i=>PADL+(W-PADL-PADR)*(series.length===1?0:i/(series.length-1));
+    const y=v=>PADT+(H-PADT-PADB)*(1-(v-mn)/span);
+    const pts=series.map((p,i)=>x(i)+','+y(p.v));
+    let g='';for(let k=0;k<=2;k++){const yy=PADT+(H-PADT-PADB)*k/2,val=mx-span*k/2;g+='<line x1="'+PADL+'" y1="'+yy+'" x2="'+(W-PADR)+'" y2="'+yy+'" stroke="#EADCD3"/><text x="'+(PADL-6)+'" y="'+(yy+4)+'" text-anchor="end" font-size="10" fill="#8A727C">'+fmt(val,1)+'</text>';}
+    let dots='';series.forEach((p,i)=>{dots+='<circle cx="'+x(i)+'" cy="'+y(p.v)+'" r="3.5" fill="'+color+'"/>';
+      if(i===0||i===series.length-1)dots+='<text x="'+x(i)+'" y="'+(y(p.v)-8)+'" text-anchor="middle" font-size="10.5" font-weight="700" fill="'+color+'">'+fmt(p.v,1)+'</text>';});
+    let xl='';series.forEach((p,i)=>{if(series.length<=6||i===0||i===series.length-1||i===Math.floor((series.length-1)/2))xl+='<text x="'+x(i)+'" y="'+(H-8)+'" text-anchor="middle" font-size="9" fill="#8A727C">'+p.date.slice(5)+'</text>';});
+    return '<svg viewBox="0 0 '+W+' '+H+'" width="100%" style="display:block">'+g
+      +'<polyline points="'+pts.join(' ')+'" fill="none" stroke="'+color+'" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>'+dots+xl+'</svg>';
+  }
+  function deltaTile(label,series,unit,goodDown){
+    if(!series.length)return '';
+    const first=series[0].v,last=series[series.length-1].v,d=last-first;
+    const good=goodDown?d<0:d>0, cls=Math.abs(d)<0.05?'flat':(good?'down':'up');
+    const sign=d>0?'+':'';
+    return {label,now:last,unit,d,cls,sign,first};
+  }
+  function renderAnalysis(name){
+    const box=$('anaBody');
+    if(!name){box.innerHTML='<div class="empty">選擇一位學員，查看歷次數據的變化趨勢。</div>';return;}
+    const st=loadDB().students.find(s=>s.name===name);
+    if(!st||!st.sessions.length){box.innerHTML='<div class="empty">這位學員還沒有數據。</div>';return;}
+    const ss=st.sessions, first=ss[0], last=ss[ss.length-1];
+    // delta tiles
+    const tiles=[
+      deltaTile('體重',metricSeries(st,'weight'),'kg',true),
+      deltaTile('體脂率',metricSeries(st,'bodyFat'),'%',true),
+      deltaTile('脂肪重',metricSeries(st,'fatMass'),'kg',true),
+      deltaTile('BMI',metricSeries(st,'bmi'),'',true)
+    ].filter(Boolean);
+    let html='<div class="deltas">'+tiles.map(t=>'<div class="delta"><div class="k">'+t.label+'</div><div class="now">'+fmt(t.now,1)+'<small style="font-size:.6em;color:#8A727C"> '+t.unit+'</small></div><div class="d '+t.cls+'">'+t.sign+fmt(t.d,1)+' '+t.unit+'（首次至今）</div></div>').join('')+'</div>';
+    // charts
+    html+='<div class="chartcard"><h4>體重 (kg)</h4>'+lineChart(metricSeries(st,'weight'),'#B85C4D')+'</div>';
+    html+='<div class="chartcard"><h4>體脂率 (%)</h4>'+lineChart(metricSeries(st,'bodyFat'),'#6F4C6E')+'</div>';
+    const waist=metricSeries(st,'circ.waist'), belly=metricSeries(st,'circ.belly');
+    if(waist.length>=2)html+='<div class="chartcard"><h4>腰圍 (cm)</h4>'+lineChart(waist,'#7E8C6A')+'</div>';
+    if(belly.length>=2)html+='<div class="chartcard"><h4>腹圍 (cm)</h4>'+lineChart(belly,'#B98A34')+'</div>';
+    // history table
+    html+=historyTable(st);
+    box.innerHTML=html;
+  }
+  function historyTable(st){
+    const ss=st.sessions;
+    const rows=[['日期',ss.map(s=>s.date.slice(5))],
+      ['體重 kg',ss.map(s=>fmt(s.weight,1))],
+      ['體脂 %',ss.map(s=>fmt(s.bodyFat,1))],
+      ['脂肪重 kg',ss.map(s=>fmt(s.fatMass,1))],
+      ['BMI',ss.map(s=>fmt(s.bmi,1))],
+      ['基礎代謝',ss.map(s=>fmt(s.bmr,0))]];
+    CIRC.forEach(([k,lab])=>{if(ss.some(s=>s.circ&&isFinite(s.circ[k])))rows.push([lab+' cm',ss.map(s=>s.circ&&isFinite(s.circ[k])?fmt(s.circ[k],1):'—')]);});
+    let h='<div style="overflow-x:auto"><table class="htbl"><thead><tr><th>項目</th>'+ss.map((s,i)=>'<th>第'+(i+1)+'次</th>').join('')+'</tr></thead><tbody>';
+    rows.forEach((r,ri)=>{h+='<tr><th>'+r[0]+'</th>'+r[1].map(v=>'<td>'+v+'</td>').join('')+'</tr>';});
+    h+='</tbody></table></div>';
+    return h;
+  }
+
+  // ---------- PDF: build page2/3 tables ----------
+  function buildMeasure(circ){
+    const COLS=8;
+    const dateHead='<th class="rowlab">量身日期</th>'+Array.from({length:COLS},()=>'<th>／</th>').join('');
+    const colg='<colgroup><col style="width:23%">'+'<col style="width:9.625%">'.repeat(COLS)+'</colgroup>';
+    const dataRows=[['體重','kg','m_w'],['BMI','','m_bmi'],['體脂','%','m_bf'],['脂肪重','體重×體脂%','m_cfat'],['差異','',null,1],['骨骼肌率','男38% ｜ 女31%',null],['肌肉重','體重×肌肉%',null],['差異','',null,1],['內臟脂肪','1~4 標準',null],['基礎代謝率','','m_bmr'],['代謝基準值','基代÷體重','m_rate'],['差異','',null,1],['體年齡','',null]];
+    const girthRows=[['右上臂圍','上臂中心點','g_arm'],['差異','',null,1],['腰圍','平行肚臍','g_waist'],['差異','',null,1],['腹圍','肚臍下 5 公分','g_belly'],['差異','',null,1],['臀圍','臀部最高點·離地約70cm','g_hip'],['差異','',null,1],['右大腿圍','最粗處·離地約60cm','g_thigh'],['差異','',null,1],['右小腿圍','最粗處','g_calf'],['差異','',null,1]];
+    const body=rows=>rows.map(r=>{const[lab,sub,pid,diff]=r;let tds='';for(let c=0;c<COLS;c++)tds+=(c===0&&pid)?('<td class="pf" id="'+pid+'"></td>'):'<td></td>';return '<tr'+(diff?' class="diff"':'')+'><th>'+lab+(sub?'<small>'+sub+'</small>':'')+'</th>'+tds+'</tr>';}).join('');
+    $('mtblData').innerHTML='<caption>① 量身紀錄表（體組成）</caption>'+colg+'<thead><tr>'+dateHead+'</tr></thead><tbody>'+body(dataRows)+'</tbody>';
+    $('mtblGirth').innerHTML='<caption>② 量身六圍（皮尺 · 公分）</caption>'+colg+'<thead><tr>'+dateHead+'</tr></thead><tbody>'+body(girthRows)+'</tbody>';
+  }
+  function buildDiet(){
+    const cols=['日期','早餐','午餐','晚餐','點心 / 飲料','飲水<br>(cc)','運動 / 備註'];
+    const cg='<colgroup><col style="width:8%"><col style="width:20%"><col style="width:20%"><col style="width:20%"><col style="width:14%"><col style="width:8%"><col style="width:10%"></colgroup>';
+    let rows='';for(let i=1;i<=7;i++)rows+='<tr><td class="day">第 '+i+' 天<br><small style="font-weight:400;color:#8A727C">＿/＿</small></td>'+'<td></td>'.repeat(6)+'</tr>';
+    $('dtbl').innerHTML=cg+'<thead><tr>'+cols.map(c=>'<th>'+c+'</th>').join('')+'</tr></thead><tbody>'+rows+'</tbody>';
+  }
+  const setR=(id,v)=>{const el=$(id);if(el)el.textContent=v;};
+  function fillClientReport(f,c){
+    const ds=f.date.replace(/-/g,'/');
+    setR('r_date',ds);setR('r_foot_date','製表日期 '+ds);
+    setR('r_name',f.name||'—');setR('r_contact',f.contact||'—');
+    setR('r_w',f.weight+' kg');setR('r_h',f.height+' cm');setR('r_a',f.age+' 歲');setR('r_g',f.genderTxt);
+    setR('r_bf',f.bodyFat+' %');setR('r_bmi',fmt(c.bmi,1));setR('r_bmr',fmt(c.bmr,0)+' 大卡');setR('r_rate',fmt(c.bmrRate,2));
+    setR('r_wt',f.targetWeight+' kg');setR('r_bft',f.targetBodyFat+' %');setR('r_bmig',fmt(c.bmiGoal,1));
+    setR('r_total',fmt(c.totalLoss,1)+' kg');setR('r_fat',fmt(c.fatToLose,2)+' kg');
+    setR('r_pace',fmt(c.planMonthlyLoss,1)+' kg（健康 '+fmt(c.healthyMin,1)+'–'+fmt(c.healthyMax,1)+'）');
+    setR('r_months',c.totalLoss<=0?'已達標':(c.deficit<=0?'—（熱量差≤0）':fmt(c.planMonths,1)+' 個月'));
+    setR('r_dietname',c.dietLabel);setR('r_tdee',fmt(f.tdee,0)+' 大卡');setR('r_target',fmt(c.targetCal,0)+' 大卡');setR('r_def',fmt(c.deficit,0)+' 大卡');
+    setR('r_pC',fmt(c.pC,0)+'%');setR('r_pP',fmt(c.pP,0)+'%');setR('r_pF',fmt(c.pF,0)+'%');
+    setR('r_ptC',fmt(c.ptC,1));setR('r_kcC',fmt(c.kcC,0));setR('r_ptP',fmt(c.ptP,1));setR('r_kcP',fmt(c.kcP,0));setR('r_ptF',fmt(c.ptF,1));setR('r_kcF',fmt(c.kcF,0));
+    setR('r_days',fmt(c.days1kg,1));
+    // page2
+    buildMeasure(f.circ);
+    setR('m_name',f.name||'');setR('m_gender',f.genderTxt);setR('m_age',f.age);setR('m_h',f.height);
+    setR('m_w',fmt(f.weight,1));setR('m_bmi',fmt(c.bmi,1));setR('m_bf',fmt(f.bodyFat,1));setR('m_cfat',fmt(c.fatMass,1));
+    setR('m_bmr',fmt(c.bmr,0));setR('m_rate',fmt(c.bmrRate,1));
+    CIRC.forEach(([k])=>{if(isFinite(f.circ[k]))setR('g_'+k,fmt(f.circ[k],1));});
+    const dh=$('mtblData').querySelector('thead th:nth-child(2)');if(dh)dh.textContent=f.date.slice(5).replace('-','/');
+    const gh=$('mtblGirth').querySelector('thead th:nth-child(2)');if(gh&&Object.keys(f.circ).length)gh.textContent=f.date.slice(5).replace('-','/');
+    // page3
+    buildDiet();
+    setR('b_cal',fmt(c.targetCal,0));setR('b_c',fmt(c.ptC,1));setR('b_p',fmt(c.ptP,1));setR('b_f',fmt(c.ptF,1));
+  }
+
+  async function capturePage(id,pdf,first){
+    const el=$(id);const canvas=await html2canvas(el,{scale:2,backgroundColor:'#ffffff',useCORS:true});
+    const pw=210,ph=297;let iw=pw,ih=canvas.height*pw/canvas.width;if(ih>ph){ih=ph;iw=canvas.width*ph/canvas.height;}
+    if(!first)pdf.addPage();pdf.addImage(canvas,'PNG',(pw-iw)/2,0,iw,ih);
+  }
+  async function makeClientPDF(){
+    const {f,c}=renderSummary();
+    if(!f.name){toast('entryToast','err','請先填寫學員姓名 🙏');$('cname').focus();return;}
+    if(!(f.weight>0&&f.height>0&&f.age>0)){toast('entryToast','err','請確認體重、身高、年齡都已填寫 🙏');return;}
+    const btn=$('pdfBtn');btn.disabled=true;btn.textContent='產生中…';
+    try{
+      await document.fonts.ready; fillClientReport(f,c);
+      const {jsPDF}=window.jspdf; const pdf=new jsPDF('p','mm','a4');
+      await capturePage('report',pdf,true); await capturePage('report2',pdf,false); await capturePage('report3',pdf,false);
+      const safe=f.name.replace(/[\\\/:*?"<>|\s]/g,'')||'學員';
+      pdf.save('TATA_FLOW_瘦身計畫_'+safe+'_'+f.date.replace(/-/g,'')+'.pdf');
+      toast('entryToast','ok','✓ 已產生 '+f.name+' 的 3 頁 PDF');
+    }catch(e){console.error(e);toast('entryToast','err','PDF 產生失敗，請重新整理再試');}
+    btn.disabled=false;btn.textContent='產生學員 PDF（3 頁）';
+  }
+
+  // ---------- analysis PDF ----------
+  async function makeAnalysisPDF(){
+    const name=$('anaPick').value;
+    if(!name){toast('entryToast','err','請先選擇學員');return;}
+    const st=loadDB().students.find(s=>s.name===name);
+    if(!st||st.sessions.length<1){alert('這位學員還沒有數據');return;}
+    const ss=st.sessions,first=ss[0],last=ss[ss.length-1];
+    setR('ra_name',name);setR('ra_range',first.date+' ～ '+last.date);setR('ra_count',ss.length+' 次');
+    setR('ra_date','製表 '+todayISO().replace(/-/g,'/'));setR('ra_foot','數據分析報告 · '+todayISO().replace(/-/g,'/'));
+    const tiles=[['體重',metricSeries(st,'weight'),'kg'],['體脂率',metricSeries(st,'bodyFat'),'%'],['脂肪重',metricSeries(st,'fatMass'),'kg'],['BMI',metricSeries(st,'bmi'),'']];
+    let dhtml='<div class="ra-delta">'+tiles.map(([lab,se,u])=>{if(!se.length)return'';const d=se[se.length-1].v-se[0].v,cls=d<-0.05?'down':(d>0.05?'up':''),sg=d>0?'+':'';return '<div class="ra-d"><div class="k">'+lab+'</div><div class="n">'+fmt(se[se.length-1].v,1)+'<small style="font-size:.6em"> '+u+'</small></div><div class="c '+cls+'">'+sg+fmt(d,1)+' '+u+'</div></div>';}).join('')+'</div>';
+    let ch='<div class="ra-chart"><h4>體重 (kg)</h4>'+lineChart(metricSeries(st,'weight'),'#B85C4D')+'</div><div class="ra-chart"><h4>體脂率 (%)</h4>'+lineChart(metricSeries(st,'bodyFat'),'#6F4C6E')+'</div>';
+    const waist=metricSeries(st,'circ.waist');if(waist.length>=2)ch+='<div class="ra-chart"><h4>腰圍 (cm)</h4>'+lineChart(waist,'#7E8C6A')+'</div>';
+    // history table (reuse, restyle class)
+    const ht=historyTable(st).replace(/class="htbl"/,'class="rhtbl"');
+    $('ra_body').innerHTML=dhtml+ch+ht;
+    const btn=$('anaPdfBtn');btn.disabled=true;btn.textContent='產生中…';
+    try{await document.fonts.ready;const {jsPDF}=window.jspdf;const pdf=new jsPDF('p','mm','a4');await capturePage('reportA',pdf,true);
+      pdf.save('TATA_FLOW_數據分析_'+name.replace(/[\\\/:*?"<>|\s]/g,'')+'_'+todayISO().replace(/-/g,'')+'.pdf');
+    }catch(e){console.error(e);alert('PDF 產生失敗，請重新整理再試');}
+    btn.disabled=false;btn.textContent='產生分析報告 PDF';
+  }
+
+  // ---------- backup ----------
+  function download(name,text,type){const b=new Blob([text],{type:type});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(u),1000);}
+  function exportJson(){download('TATA_學員備份_'+todayISO()+'.json',JSON.stringify(loadDB(),null,2),'application/json');toast('listToast','ok','✓ 已匯出備份檔');}
+  function exportCsv(){
+    const db=loadDB();const head=['姓名','聯絡','性別','身高','日期','體重','體脂%','脂肪重','BMI','基礎代謝','目標體重','目標體脂%','每日目標熱量','上臂','腰','腹','臀','大腿','小腿','備註'];
+    const rows=[head];
+    db.students.forEach(s=>s.sessions.forEach(x=>{const cc=x.circ||{};rows.push([s.name,s.contact||'',s.gender==='f'?'女':'男',s.height,x.date,x.weight,x.bodyFat,x.fatMass,x.bmi,x.bmr,x.targetWeight,x.targetBodyFat,x.targetCal,cc.arm||'',cc.waist||'',cc.belly||'',cc.hip||'',cc.thigh||'',cc.calf||'',(x.notes||'').replace(/[\n,]/g,' ')]);}));
+    const csv='\ufeff'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\n');
+    download('TATA_學員數據_'+todayISO()+'.csv',csv,'text/csv;charset=utf-8');toast('listToast','ok','✓ 已匯出 CSV（可用 Excel 開啟）');
+  }
+  function importJson(file){const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);if(!d.students)throw 0;
+    if(confirm('還原備份會「合併」到目前資料（同名同日期會覆蓋）。確定要繼續嗎？')){
+      const db=loadDB();d.students.forEach(ns=>{let os=db.students.find(s=>s.name===ns.name);if(!os){db.students.push(ns);}else{os.contact=ns.contact||os.contact;os.height=ns.height||os.height;ns.sessions.forEach(nsess=>{const i=os.sessions.findIndex(x=>x.date===nsess.date);if(i>=0)os.sessions[i]=nsess;else os.sessions.push(nsess);});os.sessions.sort((a,b)=>a.date.localeCompare(b.date));}});
+      saveDB(db);renderList($('search').value);refreshAnaPicker();toast('listToast','ok','✓ 備份已還原');}
+  }catch(e){toast('listToast','err','檔案格式不正確，還原失敗');}};r.readAsText(file);}
+
+  // ---------- ui helpers ----------
+  function toast(id,cls,msg){const t=$(id);t.className='toast show '+cls;t.textContent=msg;clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),4000);}
+  function switchView(v){
+    ['entry','list','analysis'].forEach(x=>$('view-'+x).classList.toggle('hidden',x!==v));
+    [...$('tabs').children].forEach(b=>b.classList.toggle('on',b.dataset.v===v));
+    if(v==='list')renderList($('search').value);
+    if(v==='analysis')refreshAnaPicker();
+  }
+  function loadIntoForm(name,date){
+    const st=loadDB().students.find(s=>s.name===name);if(!st)return;const x=st.sessions.find(s=>s.date===date);if(!x)return;
+    $('cname').value=st.name;$('ccontact').value=st.contact||'';$('cdate').value=x.date;$('h').value=st.height;
+    gender=st.gender;[...$('gender').children].forEach(b=>b.classList.toggle('on',b.dataset.g===gender));
+    $('w').value=x.weight;$('a').value=x.age;$('bf').value=x.bodyFat;$('wt').value=x.targetWeight;$('bft').value=x.targetBodyFat;
+    $('activity').value=x.activity;$('tdee').value=x.tdee;strength=x.strength;[...$('strength').children].forEach(b=>b.classList.toggle('on',+b.dataset.s===strength));
+    $('target').value=x.targetCal;diet=x.diet;[...$('diet').children].forEach(b=>b.classList.toggle('on',b.dataset.d===diet));
+    CIRC.forEach(([k])=>{$('c_'+k).value=x.circ&&isFinite(x.circ[k])?x.circ[k]:'';});$('notes').value=x.notes||'';
+    $('entryMode').textContent='編輯：'+name+' · '+date;switchView('entry');renderSummary();
+  }
+
+  // ---------- events ----------
+  ['h','w','a','bf','wt','bft','target'].forEach(id=>$(id).addEventListener('input',renderSummary));
+  $('gender').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;gender=b.dataset.g;[...e.currentTarget.children].forEach(x=>x.classList.toggle('on',x===b));refreshTDEEfield();refreshTargetField();renderSummary();});
+  $('activity').addEventListener('change',()=>{refreshTDEEfield();refreshTargetField();renderSummary();});
+  $('tdee').addEventListener('input',()=>{refreshTargetField();renderSummary();});
+  $('strength').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;strength=+b.dataset.s;[...e.currentTarget.children].forEach(x=>x.classList.toggle('on',x===b));refreshTargetField();renderSummary();});
+  $('diet').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;diet=b.dataset.d;[...e.currentTarget.children].forEach(x=>x.classList.toggle('on',x===b));renderSummary();});
+  $('saveBtn').addEventListener('click',saveRecord);
+  $('pdfBtn').addEventListener('click',makeClientPDF);
+  $('clearBtn').addEventListener('click',()=>{['cname','ccontact','notes'].forEach(id=>$(id).value='');CIRC.forEach(([k])=>$('c_'+k).value='');$('cdate').value=todayISO();editKey=null;$('entryMode').textContent='新增紀錄';renderSummary();toast('entryToast','ok','已清空，可輸入新學員');});
+  $('tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b)switchView(b.dataset.v);});
+  $('search').addEventListener('input',e=>renderList(e.target.value));
+  $('anaPick').addEventListener('change',e=>renderAnalysis(e.target.value));
+  $('anaPdfBtn').addEventListener('click',makeAnalysisPDF);
+  $('expJson').addEventListener('click',exportJson);
+  $('expCsv').addEventListener('click',exportCsv);
+  $('impJson').addEventListener('click',()=>$('impFile').click());
+  $('impFile').addEventListener('change',e=>{if(e.target.files[0])importJson(e.target.files[0]);e.target.value='';});
+
+  // ---------- init ----------
+  $('cdate').value=todayISO();
+  refreshTDEEfield();refreshTargetField();renderSummary();refreshAnaPicker();
+})();
+</script>
+</body>
+</html>
