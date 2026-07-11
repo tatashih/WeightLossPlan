@@ -73,6 +73,30 @@
   .sum .v small{font-size:.72rem;font-weight:500;color:var(--ink-soft);margin-left:2px}
   .macro-line{margin-top:12px;font-size:.9rem;color:#5f4750;background:var(--sage-soft);border-radius:11px;padding:11px 14px;line-height:1.7}
   .macro-line b{font-family:"Noto Serif TC",serif;color:#3e4a30}
+  /* visual portion card */
+  .portion-card{margin-top:12px;border:1.5px solid #DEE4D3;border-radius:16px;overflow:hidden;background:#fff}
+  .pc-head{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:13px 18px;background:var(--sage-soft)}
+  .pc-title{font-family:"Noto Serif TC",serif;font-weight:900;font-size:1.05rem;color:#3e4a30}
+  .pc-cal{font-size:.84rem;color:#556047}
+  .pc-cal b{font-family:"Noto Serif TC",serif;font-size:1.02rem;color:#3e4a30}
+  .pc-body{display:grid;grid-template-columns:1.35fr 1fr}
+  @media(max-width:640px){.pc-body{grid-template-columns:1fr}}
+  .pc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px}
+  .pc-tile{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 10px 12px;text-align:center;position:relative;overflow:hidden}
+  .pc-tile::before{content:"";position:absolute;left:0;right:0;top:0;height:4px}
+  .pc-tile.carb::before{background:var(--gold)} .pc-tile.pro::before{background:var(--rose)} .pc-tile.fat::before{background:var(--sage)} .pc-tile.veg::before{background:#6f9e5c}
+  .pc-ico{font-size:1.7rem;line-height:1}
+  .pc-name{font-family:"Noto Serif TC",serif;font-weight:700;font-size:.9rem;margin-top:5px;color:var(--ink)}
+  .pc-num{font-family:"Noto Serif TC",serif;font-weight:900;font-size:2rem;line-height:1;margin-top:6px;color:var(--ink)}
+  .pc-num span{font-size:.85rem;font-weight:500;color:var(--ink-soft)}
+  .pc-hint{font-size:.71rem;color:var(--ink-soft);margin-top:5px;line-height:1.4}
+  .pc-notes{border-left:1px solid var(--line);padding:16px 18px;font-size:.83rem;line-height:1.55;color:#5f4750;background:#FCFAF7}
+  @media(max-width:640px){.pc-notes{border-left:none;border-top:1px solid var(--line)}}
+  .pc-notes .nh{font-family:"Noto Serif TC",serif;font-weight:700;color:var(--ink);margin-bottom:8px;font-size:.92rem}
+  .pc-notes ul{list-style:none;margin:0;padding:0}
+  .pc-notes li{position:relative;padding-left:15px;margin:6px 0}
+  .pc-notes li::before{content:"·";position:absolute;left:3px;top:-1px;color:var(--sage);font-weight:900;font-size:1.1em}
+  .pc-notes b{color:var(--ink)}
   .plantime{margin-top:12px;border:1.5px solid var(--line);border-radius:13px;padding:14px 16px;font-size:.92rem;line-height:1.75;background:#fff}
   .plantime b{font-family:"Noto Serif TC",serif;color:var(--ink)}
   .plantime .big{font-family:"Noto Serif TC",serif;font-weight:900;font-size:1.3rem;color:var(--rose)}
@@ -340,7 +364,7 @@
         <div class="field"><label>飲食型態</label>
           <div class="seg sage" id="diet" style="margin-top:2px"><button data-d="balance" class="on">均衡</button><button data-d="lowcarb">低醣</button></div></div>
       </div>
-      <div class="macro-line" id="macroLine">—</div>
+      <div class="portion-card" id="portionCard"></div>
       <div class="plantime" id="planTime">—</div>
     </section>
 
@@ -627,11 +651,28 @@
     $('s_fat').textContent=fmt(c.fatMass,1); $('s_rate').textContent=fmt(c.bmrRate,1);
     $('s_total').textContent=fmt(c.totalLoss,1); $('s_fatloss').textContent=fmt(c.fatToLose,1);
     $('s_band').innerHTML=fmt(c.healthyMin,1)+'–'+fmt(c.healthyMax,1)+' <small style="font-size:.62em;color:#8A727C">kg</small>';
-    $('macroLine').innerHTML='<b>每日目標 '+fmt(c.targetCal,0)+' 大卡</b>｜其中主食 '+fmt(c.mainKcal,0)+' 大卡 → 碳水 <b>'+p05(c.ptC)+'</b> 份　蛋白質 <b>'+p05(c.ptP)+'</b> 份　油脂 <b>'+p05(c.ptF)+'</b> 份　<span style="color:#6a7357">蔬果 <b>3–5</b> 份（基本 3 份，水果最多佔 1 份）</span>';
+    renderPortionCard(c);
     renderPlanTime(c);
     const al=$('a_bmi');al.classList.remove('show');
     if(c.bmiGoal>0&&c.bmiGoal<18.5){al.classList.add('show');al.innerHTML='⚠️ 目標 BMI '+fmt(c.bmiGoal,1)+' 低於健康下限（18.5）。建議目標體重不低於 '+fmt(18.5*(f.height/100)**2,1)+' kg，更長久也更好維持。';}
     return {f,c};
+  }
+  function renderPortionCard(c){
+    const tiles=[
+      ['carb','🍚','碳水（澱粉）',p05(c.ptC),'拳頭體積 ＝ 1 份'],
+      ['pro','🍗','蛋白質',p05(c.ptP),'掌心（面積＋厚度）＝ 1 份'],
+      ['fat','🥑','油脂',p05(c.ptF),'1 湯匙油 / 5 顆腰果 ＝ 1 份'],
+      ['veg','🥦','蔬果','3–5','拳頭體積 ＝ 1 份']
+    ];
+    const grid=tiles.map(t=>'<div class="pc-tile '+t[0]+'"><div class="pc-ico">'+t[1]+'</div><div class="pc-name">'+t[2]+'</div><div class="pc-num">'+t[3]+' <span>份</span></div><div class="pc-hint">'+t[4]+'</div></div>').join('');
+    const notes='<div class="nh">份量重點（可截圖給學員）</div><ul>'
+      +'<li><b>澱粉 / 蔬菜 / 豆類 / 水果</b> → 你的 <b>拳頭體積</b> ＝ 1 份</li>'
+      +'<li><b>肉 / 魚 / 海鮮</b> → 你的 <b>掌心</b>（面積＋厚度）＝ 1 份；<b>蛋 2 顆</b> ＝ 1 份</li>'
+      +'<li><b>油脂</b> → 1 湯匙橄欖油（15ml）或 5 顆腰果 ＝ 1 份</li>'
+      +'<li><b>無糖豆漿 / 牛奶</b> → 超商新鮮屋大小 ＝ 1 份</li>'
+      +'<li>每餐都要 <b>有菜、有肉、有澱粉</b>；水果最多 1 份、下午 4 點前吃</li></ul>';
+    $('portionCard').innerHTML='<div class="pc-head"><div class="pc-title">🍽️ 每日飲食份量</div><div class="pc-cal">目標 <b>'+fmt(c.targetCal,0)+'</b> 大卡　·　主食 '+fmt(c.mainKcal,0)+' ＋ 蔬果 '+fmt(c.produceKcal,0)+'</div></div>'
+      +'<div class="pc-body"><div class="pc-grid">'+grid+'</div><div class="pc-notes">'+notes+'</div></div>';
   }
   function renderPlanTime(c){
     const el=$('planTime');
