@@ -109,6 +109,20 @@
   #reportInfo .ci table td:first-child{background:#FAF5F1;font-weight:700;width:34%;white-space:nowrap;color:var(--ink)}
   #reportInfo .ci ul{margin:4px 0 4px 18px} #reportInfo .ci li{margin:3px 0}
   #reportInfo .ci .warn{color:#8C4A22}
+
+  /* food classification guide */
+  .calc-body .foodcat{display:grid;gap:10px;margin:6px 0}
+  .calc-body .fc{background:#fff;border:1px solid var(--line);border-radius:11px;padding:11px 13px;font-size:.86rem;line-height:1.75}
+  .calc-body .fc-h{font-family:"Noto Serif TC",serif;font-weight:700;color:var(--ink);margin-bottom:4px;font-size:.94rem}
+  .calc-body .fc b{color:var(--ink)}
+  .calc-body .foodwarn{background:#FCEEE4;border:1px solid #F0C9AC;color:#8C4A22;border-radius:11px;padding:12px 14px;font-size:.85rem;line-height:1.8;margin-top:10px}
+  .calc-body .foodwarn b{color:#8C4A22}
+  #reportInfo2 .fg{margin-top:16px}
+  #reportInfo2 .fg .fc{background:#FCF3F0;border:1px solid #F0D8D0;border-radius:12px;padding:13px 16px;margin-bottom:11px;font-size:12.5px;line-height:1.9;color:#5f4750}
+  #reportInfo2 .fg .fc-h{font-family:"Noto Serif TC",serif;font-weight:700;font-size:14.5px;color:var(--ink);margin-bottom:5px}
+  #reportInfo2 .fg .fc b{color:var(--ink)}
+  #reportInfo2 .fg .fw{background:#FCEEE4;border:1px solid #F0C9AC;color:#8C4A22;border-radius:12px;padding:14px 16px;font-size:12.5px;line-height:1.95;margin-top:4px}
+  #reportInfo2 .fg .fw b{color:#8C4A22}
   .alert{border-radius:12px;padding:12px 14px;font-size:.86rem;line-height:1.6;margin-top:12px;display:none}
   .alert.show{display:block}
   .alert.warn{background:#FCEEE4;border:1px solid #F0C9AC;color:#8C4A22}
@@ -372,6 +386,13 @@
           1 公斤體脂 ≈ <b>7,700 大卡</b>。減 1kg 天數 ＝ 7,700 ÷ 每日熱量差；每月約減 ＝ 每日熱量差 ×30 ÷ 7,700。
           <h5>⑥ 健康速度（安全檢核）</h5>
           每月建議落在 <b>體重的 3–5%</b>。低於下限＝溫和安全（較慢）；高於上限＝偏快，別讓每日攝取低於基礎代謝。
+          <h5>⑦ 食物分類與份量對照（教學員怎麼算）</h5>
+          <div class="foodcat">
+            <div class="fc"><div class="fc-h">🌟 澱粉（碳水）· 拳頭體積 ＝ 1 份</div>飯、麵、冬粉、米粉、饅頭／玉米、南瓜、蓮藕、山藥／芋頭、地瓜、馬鈴薯／紅豆、綠豆、皇帝豆、豌豆／栗子、菱角、荸薺<br><b>👉 以「你的」拳頭體積 ＝ 1 份</b></div>
+            <div class="fc"><div class="fc-h">🌟 蛋白質 · 掌心（面積＋厚度）＝ 1 份</div>雞、豬、牛、鴨、鵝肉／海鮮、魚、貝類 → 整個掌心（面積＋厚度）＝ 1 份<br>蛋 → <b>2 顆 ＝ 1 份</b>；豆漿、豆腐、豆皮、豆乾／牛奶、優格、優酪乳、起司／黃豆、黑豆、毛豆<br><b>👉 豆漿、牛奶選無糖，超商新鮮屋大小 ＝ 1 份；豆類用拳頭體積 ＝ 1 份</b></div>
+            <div class="fc"><div class="fc-h">🌟 蔬果 · 拳頭體積 ＝ 1 份</div>一天 3 份蔬果中，<b>水果最多佔 1 份</b>，並在<b>下午 4 點前</b>吃完；蔬菜可以多吃（3–5 份），想減脂更好一天吃到 5 份。<br><b>👉 大番茄是蔬菜、小番茄是水果；玉米筍是蔬菜、大玉米是澱粉。</b></div>
+          </div>
+          <div class="foodwarn">⚠️ <b>每餐盡量三樣都吃到</b>（有菜、有肉、有澱粉），別單一餐狂吃蛋白質；<b>一天只吃 2 餐</b>的人份量要平均分到兩餐，別吃成節食；<b>初期抓不準</b>時，先拍照紀錄 1–2 週，避免踩雷而不自覺。</div>
         </div>
       </details>
       <div style="margin-top:12px"><button class="btn ghost" id="infoPdfBtn">⬇ 下載「計算說明」PDF</button></div>
@@ -471,7 +492,7 @@
   <!-- page3 -->
   <div id="report3" class="report">
     <div class="r-top"><div class="r-brand">TATA FLOW<span>循環 · 塑形 · 健康瘦身</span></div><div class="r-title">飲食記錄表<small>對照每日目標份量．誠實紀錄</small></div></div>
-    <div class="target-banner">🎯 <b>每日目標</b>　<span class="cal"><span id="b_cal">—</span> 大卡</span>（含蔬果）　｜　碳水 <b><span id="b_c">—</span></b> 份　蛋白質 <b><span id="b_p">—</span></b> 份　油脂 <b><span id="b_f">—</span></b> 份　蔬菜 <b>3–5</b> 份　低糖水果 <b>≤1</b> 份<br><span style="font-size:11px;color:#6a7357">份量抓法：碳水 / 蛋白質 1 份＝1 個拳頭；蔬菜 1 份＝1 個拳頭（煮熟）；油脂 1 份＝1 湯匙橄欖油（15ml）或 5 顆腰果</span></div>
+    <div class="target-banner">🎯 <b>每日目標</b>　<span class="cal"><span id="b_cal">—</span> 大卡</span>（含蔬果）　｜　碳水 <b><span id="b_c">—</span></b> 份　蛋白質 <b><span id="b_p">—</span></b> 份　油脂 <b><span id="b_f">—</span></b> 份　蔬果 <b>3–5</b> 份（水果最多佔 1 份）<br><span style="font-size:11px;color:#6a7357">份量抓法：碳水 / 蛋白質 1 份＝1 個拳頭；蔬菜 1 份＝1 個拳頭（煮熟）；油脂 1 份＝1 湯匙橄欖油（15ml）或 5 顆腰果</span></div>
     <table class="dtbl" id="dtbl"></table>
     <div class="tip" style="margin-top:12px"><b style="color:var(--sage)">✍️ 使用方式</b>每天記下實際吃的內容，對照上方目標份量檢視。三餐＋點心都寫，順手記錄飲水與運動。紀錄是為了看見自己的進步，不是為了苛責自己——誠實就是最好的開始。</div>
     <div class="r-foot"><span class="bd">TATA FLOW</span><span>飲食記錄表</span></div>
@@ -517,6 +538,18 @@
     </div>
     <div class="r-foot"><span class="bd">TATA FLOW</span><span>份量與熱量計算說明</span></div>
   </div>
+
+  <!-- 計算說明 · 第2頁：食物分類 -->
+  <div id="reportInfo2" class="report">
+    <div class="r-top"><div class="r-brand">TATA FLOW<span>循環 · 塑形 · 健康瘦身</span></div><div class="r-title">食物分類與份量對照<small>怎麼抓份量</small></div></div>
+    <div class="fg">
+      <div class="fc"><div class="fc-h">🌟 澱粉（碳水）· 拳頭體積 ＝ 1 份</div>飯、麵、冬粉、米粉、饅頭　／　玉米、南瓜、蓮藕、山藥　／　芋頭、地瓜、馬鈴薯　／　紅豆、綠豆、皇帝豆、豌豆　／　栗子、菱角、荸薺<br><b>👉 以「你的」拳頭體積 ＝ 1 份</b></div>
+      <div class="fc"><div class="fc-h">🌟 蛋白質 · 掌心（面積＋厚度）＝ 1 份</div>雞、豬、牛、鴨、鵝肉　／　海鮮、魚、貝類　→　整個掌心（面積＋厚度）＝ 1 份<br>蛋 → <b>2 顆 ＝ 1 份</b>　；　豆漿、豆腐、豆皮、豆乾　／　牛奶、優格、優酪乳、起司　／　黃豆、黑豆、毛豆<br><b>👉 豆漿、牛奶選無糖，超商新鮮屋大小 ＝ 1 份；豆類用拳頭體積 ＝ 1 份</b></div>
+      <div class="fc"><div class="fc-h">🌟 蔬果 · 拳頭體積 ＝ 1 份</div>一天 3 份蔬果中，<b>水果最多佔 1 份</b>，並在<b>下午 4 點前</b>吃完。<br>蔬菜可以多吃（3–5 份），想要減脂效果更好，一天建議吃到 5 份！<br><b>👉 大番茄是蔬菜、小番茄是水果；玉米筍是蔬菜、大玉米是澱粉。</b></div>
+      <div class="fw">⚠️ <b>每餐盡量三樣都吃到</b>，有菜、有肉、有澱粉，餐餐均衡，別單一餐瘋狂吃蛋白質。<br>⚠️ <b>一天只吃 2 餐</b>的人，要把份量平均分配到兩餐裡，才不會吃成節食！<br>⚠️ <b>初期還無法掌握飲食時</b>，最好拍照紀錄 1–2 週，以免踩雷而不自覺。</div>
+    </div>
+    <div class="r-foot"><span class="bd">TATA FLOW</span><span>食物分類與份量對照</span></div>
+  </div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -538,6 +571,7 @@
 
   const num=el=>{const v=parseFloat(el.value);return isFinite(v)?v:0;};
   const fmt=(n,d)=>isFinite(n)?(Math.round(n*Math.pow(10,d))/Math.pow(10,d)).toLocaleString('en-US',{minimumFractionDigits:0,maximumFractionDigits:d}):'—';
+  const p05=n=>{if(!isFinite(n))return'—';const r=Math.round(n*2)/2;return r%1===0?String(r):r.toFixed(1);};  // 份數四捨五入到 0.5
   const todayISO=()=>{const n=new Date();return n.getFullYear()+'-'+String(n.getMonth()+1).padStart(2,'0')+'-'+String(n.getDate()).padStart(2,'0');};
   function bmiBand(b){if(b<18.5)return'過輕';if(b<24)return'健康';if(b<27)return'過重';return'肥胖';}
 
@@ -593,8 +627,7 @@
     $('s_fat').textContent=fmt(c.fatMass,1); $('s_rate').textContent=fmt(c.bmrRate,1);
     $('s_total').textContent=fmt(c.totalLoss,1); $('s_fatloss').textContent=fmt(c.fatToLose,1);
     $('s_band').innerHTML=fmt(c.healthyMin,1)+'–'+fmt(c.healthyMax,1)+' <small style="font-size:.62em;color:#8A727C">kg</small>';
-    $('macroLine').innerHTML='<b>每日目標 '+fmt(c.targetCal,0)+' 大卡</b>（'+c.dietLabel+'，已含蔬果）｜其中主食 '+fmt(c.mainKcal,0)+' 大卡 → 碳水 <b>'+fmt(c.ptC,1)+'</b> 份　蛋白質 <b>'+fmt(c.ptP,1)+'</b> 份　油脂 <b>'+fmt(c.ptF,1)+'</b> 份'
-      +'<br><span style="color:#6a7357">＋ 蔬菜 3–5 份（基本 3 份·煮熟拳頭）＋ 低糖水果 ≤1 份　≈ '+fmt(c.produceKcal,0)+' 大卡（已含在目標內）</span>';
+    $('macroLine').innerHTML='<b>每日目標 '+fmt(c.targetCal,0)+' 大卡</b>｜其中主食 '+fmt(c.mainKcal,0)+' 大卡 → 碳水 <b>'+p05(c.ptC)+'</b> 份　蛋白質 <b>'+p05(c.ptP)+'</b> 份　油脂 <b>'+p05(c.ptF)+'</b> 份　<span style="color:#6a7357">蔬果 <b>3–5</b> 份（基本 3 份，水果最多佔 1 份）</span>';
     renderPlanTime(c);
     const al=$('a_bmi');al.classList.remove('show');
     if(c.bmiGoal>0&&c.bmiGoal<18.5){al.classList.add('show');al.innerHTML='⚠️ 目標 BMI '+fmt(c.bmiGoal,1)+' 低於健康下限（18.5）。建議目標體重不低於 '+fmt(18.5*(f.height/100)**2,1)+' kg，更長久也更好維持。';}
@@ -798,7 +831,7 @@
     setR('r_months',c.totalLoss<=0?'已達標':(c.deficit<=0?'—（熱量差≤0）':fmt(c.planMonths,1)+' 個月'));
     setR('r_dietname',c.dietLabel);setR('r_tdee',fmt(f.tdee,0)+' 大卡');setR('r_target',fmt(c.targetCal,0)+' 大卡');setR('r_main',fmt(c.mainKcal,0)+' 大卡');setR('r_produce','約 '+fmt(c.produceKcal,0)+' 大卡');setR('r_def',fmt(c.deficit,0)+' 大卡');
     setR('r_pC',fmt(c.pC,0)+'%');setR('r_pP',fmt(c.pP,0)+'%');setR('r_pF',fmt(c.pF,0)+'%');
-    setR('r_ptC',fmt(c.ptC,1));setR('r_kcC',fmt(c.kcC,0));setR('r_ptP',fmt(c.ptP,1));setR('r_kcP',fmt(c.kcP,0));setR('r_ptF',fmt(c.ptF,1));setR('r_kcF',fmt(c.kcF,0));
+    setR('r_ptC',p05(c.ptC));setR('r_kcC',fmt(c.kcC,0));setR('r_ptP',p05(c.ptP));setR('r_kcP',fmt(c.kcP,0));setR('r_ptF',p05(c.ptF));setR('r_kcF',fmt(c.kcF,0));
     setR('r_days',fmt(c.days1kg,1));
     // page2
     buildMeasure(f.circ);
@@ -810,7 +843,7 @@
     const gh=$('mtblGirth').querySelector('thead th:nth-child(2)');if(gh&&Object.keys(f.circ).length)gh.textContent=f.date.slice(5).replace('-','/');
     // page3
     buildDiet();
-    setR('b_cal',fmt(c.targetCal,0));setR('b_c',fmt(c.ptC,1));setR('b_p',fmt(c.ptP,1));setR('b_f',fmt(c.ptF,1));
+    setR('b_cal',fmt(c.targetCal,0));setR('b_c',p05(c.ptC));setR('b_p',p05(c.ptP));setR('b_f',p05(c.ptF));
   }
 
   async function capturePage(id,pdf,first){
@@ -925,7 +958,7 @@
   $('anaPdfBtn').addEventListener('click',makeAnalysisPDF);
   async function makeInfoPDF(){
     const btn=$('infoPdfBtn');btn.disabled=true;btn.textContent='產生中…';
-    try{await document.fonts.ready;const {jsPDF}=window.jspdf;const pdf=new jsPDF('p','mm','a4');await capturePage('reportInfo',pdf,true);pdf.save('TATA_FLOW_計算說明.pdf');}
+    try{await document.fonts.ready;const {jsPDF}=window.jspdf;const pdf=new jsPDF('p','mm','a4');await capturePage('reportInfo',pdf,true);await capturePage('reportInfo2',pdf,false);pdf.save('TATA_FLOW_計算說明.pdf');}
     catch(e){console.error(e);alert('PDF 產生失敗，請重新整理再試');}
     btn.disabled=false;btn.textContent='⬇ 下載「計算說明」PDF';
   }
